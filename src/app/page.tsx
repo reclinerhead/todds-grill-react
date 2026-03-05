@@ -11,25 +11,30 @@ export default function Home() {
 
       {/* Hero Section */}
       <section
-        className="h-screen flex items-center justify-center text-white"
+        className="relative h-screen flex items-center justify-center text-white overflow-hidden"
         style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80')",
+          backgroundImage: `url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        <div className="text-center bg-black bg-opacity-50 p-8 rounded">
-          <h2 className="text-5xl font-bold mb-4">
-            Welcome to Todds Grill and Bait Shop
+        {/* Optional: subtle gradient overlay for better contrast */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/70" />
+
+        {/* Frosted glass card */}
+        <div className="relative z-10 bg-white/10 backdrop-blur-sm border border-white/20 p-8 md:p-12 rounded-2xl text-center max-w-4xl mx-auto">
+          <h2 className="text-4xl md:text-6xl lg:text-4xl font-extrabold mb-4 md:mb-6 leading-tight drop-shadow-lg">
+            Welcome to Todd&apos;s Grill and Bait Shop
           </h2>
-          <p className="text-xl mb-6">
-            The best grilled food in town. And minnows and wrigglers when you
-            need them.
+
+          <p className="text-lg md:text-1xl mb-8 md:mb-10 text-gray-200 drop-shadow-md">
+            The best grilled food in town. And fresh minnows and wrigglers when
+            you need them.
           </p>
+
           <a
             href="#menu"
-            className="bg-orange-500 hover:bg-orange-600 px-6 py-3 rounded text-lg font-semibold"
+            className="inline-block bg-orange-600 hover:bg-orange-700 text-white font-semibold text-lg md:text-xl px-8 py-4 md:px-10 md:py-5 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-orange-500 focus:ring-opacity-50"
           >
             View Menu
           </a>
