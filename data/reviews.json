@@ -24,6 +24,14 @@
         "name": "Susan Thompson",
         "date": "1 day ago",
         "text": "My husband Mike told me he was out of town that day! How dare you two sneak off for burgers without me? Next time, I'll stuff that burger down your throat myself, Jessica!"
+      },
+      {
+        "avatar": "🐟",
+        "bgColor": "bg-teal-100",
+        "name": "Todd (Owner)",
+        "date": "Just now",
+        "text": "Mike, thanks for the love on the Classic Burger — glad the cheese was melty enough to win you over. Next time bring Susan so I can see the family reunion in person. Burgers on me! 🍔",
+        "item": "Official Response"
       }
     ]
   },
@@ -79,6 +87,14 @@
         "name": "CrawlDad69",
         "date": "30 min ago",
         "text": "Dave speaks truth. Bought nightcrawlers, caught a limit of perch, grilled 'em up at home. Todd's is the ultimate life hack. Karen needs to toughen up."
+      },
+      {
+        "avatar": "🐟",
+        "bgColor": "bg-teal-100",
+        "name": "Todd (Owner)",
+        "date": "Just now",
+        "text": "Dave, thanks for the shoutout — that 22-inch bass story made my day. Next time bring the catch back and I'll grill it for you on the house. Tight lines and juicy steaks! 🎣🍖",
+        "item": "Official Response"
       }
     ]
   },
@@ -107,6 +123,14 @@
         "name": "WormWhispererMI",
         "date": "15 min ago",
         "text": "Lane? This is KALAMAZOO. We don't do lanes here — we do life. Burger in one hand, worm in the other. Cry harder."
+      },
+      {
+        "avatar": "🐟",
+        "bgColor": "bg-teal-100",
+        "name": "Todd (Owner)",
+        "date": "Just now",
+        "text": "WormWhispererMI, visionary? Nah, just a guy who likes burgers and bass fishing. Thanks for the kind words — next time you're in, the loaded fries are on me. Keep whispering to those worms, they're listening! 🐛🍟",
+        "item": "Official Response"
       }
     ]
   },
@@ -127,7 +151,7 @@
         "bgColor": "bg-teal-100",
         "name": "Todd (Owner)",
         "date": "Just now",
-        "text": "Sorry your butthurt soul can't handle a little real Michigan flavor, ConflictedFisherGal. Maybe try some yoga... or just order takeout and stay in your lane. We got burgers AND bait for a reason — life ain't all kale smoothies. Come back when you're ready for both. 😏",
+        "text": "ConflictedFisherGal, sorry your soul's taking a hit from the onion-minnow combo — that's just the aroma of opportunity! Glad you came back for the steak anyway. Next time bring earplugs for your soul and I'll throw in extra dipping sauce. Still love ya! 😏",
         "item": "Official Response"
       }
     ]
