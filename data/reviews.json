@@ -1,0 +1,135 @@
+[
+  {
+    "type": "threaded",
+    "parent": {
+      "avatar": "🍔",
+      "bgColor": "bg-amber-100",
+      "name": "Mike Thompson",
+      "rating": "★★★★★",
+      "date": "March 2, 2026",
+      "text": "Hands down the best Classic Burger in town. Perfectly grilled, juicy, and loaded with flavor. The cheese was melty perfection. Will definitely be back!",
+      "item": "Classic Burger"
+    },
+    "replies": [
+      {
+        "avatar": "JR",
+        "bgColor": "bg-blue-100",
+        "name": "Jessica Ruiz",
+        "date": "2 days ago",
+        "text": "I went with Mike last week and totally agree on the burger! We also got the Loaded Fries and they were addictive. Best meal we've had in months at Todd's."
+      },
+      {
+        "avatar": "ST",
+        "bgColor": "bg-red-100",
+        "name": "Susan Thompson",
+        "date": "1 day ago",
+        "text": "My husband Mike told me he was out of town that day! How dare you two sneak off for burgers without me? Next time, I'll stuff that burger down your throat myself, Jessica!"
+      }
+    ]
+  },
+  {
+    "type": "standalone",
+    "avatar": "🥩",
+    "bgColor": "bg-red-100",
+    "name": "Robert Kline",
+    "rating": "★★★★☆",
+    "date": "February 28, 2026",
+    "text": "Ordered the Grilled Steak and it was cooked perfectly medium-rare. Super tender and flavorful. Quantities are limited for a reason — it's that good!",
+    "item": "Grilled Steak"
+  },
+  {
+    "type": "standalone",
+    "avatar": "🍄",
+    "bgColor": "bg-emerald-100",
+    "name": "Lisa Chen",
+    "rating": "★★★★★",
+    "date": "March 1, 2026",
+    "text": "The Fried Mushrooms were incredible! Crispy, flavorful, and the dipping sauce was perfect. Also loved the Caesar Salad. Great spot for both food and bait runs 😂",
+    "item": "Fried Mushrooms & Caesar Salad"
+  },
+  {
+    "type": "threaded",
+    "parent": {
+      "avatar": "🎣",
+      "bgColor": "bg-cyan-100",
+      "name": "BigFishDave87",
+      "rating": "★★★★★",
+      "date": "March 4, 2026",
+      "text": "Todd's is a GENIUS for selling live bait right next to the grill. Caught a 22-inch bass on minnows I bought there 20 minutes earlier. Then ate a perfect ribeye. Life doesn't get better than this. 10/10 would recommend to every angler in Kalamazoo.",
+      "item": "Fresh Minnows + Ribeye"
+    },
+    "replies": [
+      {
+        "avatar": "🍟",
+        "bgColor": "bg-yellow-100",
+        "name": "KarenFromKzoo",
+        "date": "1 hour ago",
+        "text": "Are you serious? I just wanted a nice family burger night and there's a bucket of live worms two feet from my table. The smell! The SLIME! Never again. Todd's lost a customer forever."
+      },
+      {
+        "avatar": "🎣",
+        "bgColor": "bg-cyan-100",
+        "name": "BigFishDave87",
+        "date": "45 min ago",
+        "text": "@KarenFromKzoo lady it's called ambiance. You want boring chain-restaurant vibes go to Applebee's. This is REAL Michigan — grill + bait under one roof. Cry about it."
+      },
+      {
+        "avatar": "🦐",
+        "bgColor": "bg-pink-100",
+        "name": "CrawlDad69",
+        "date": "30 min ago",
+        "text": "Dave speaks truth. Bought nightcrawlers, caught a limit of perch, grilled 'em up at home. Todd's is the ultimate life hack. Karen needs to toughen up."
+      }
+    ]
+  },
+  {
+    "type": "threaded",
+    "parent": {
+      "avatar": "🐛",
+      "bgColor": "bg-lime-100",
+      "name": "WormWhispererMI",
+      "rating": "★★★★★",
+      "date": "March 5, 2026",
+      "text": "The fact that I can get a loaded cheeseburger AND premium wrigglers in one stop is PEAK convenience. Todd is a visionary. The bait fridge is always stocked and the burgers are fire. 5 stars forever.",
+      "item": "Loaded Fries + Fresh Wrigglers"
+    },
+    "replies": [
+      {
+        "avatar": "😡",
+        "bgColor": "bg-red-100",
+        "name": "NoBaitNoThanks",
+        "date": "20 min ago",
+        "text": "Visionary? More like disgusting. I almost vomited when I saw someone buy worms while I was trying to eat my salad. Hygiene nightmare. Todd's needs to pick a lane — restaurant OR bait shop. Not both."
+      },
+      {
+        "avatar": "🐛",
+        "bgColor": "bg-lime-100",
+        "name": "WormWhispererMI",
+        "date": "15 min ago",
+        "text": "Lane? This is KALAMAZOO. We don't do lanes here — we do life. Burger in one hand, worm in the other. Cry harder."
+      }
+    ]
+  },
+  {
+    "type": "threaded",
+    "parent": {
+      "avatar": "🤔",
+      "bgColor": "bg-purple-100",
+      "name": "ConflictedFisherGal",
+      "rating": "★★★☆☆",
+      "date": "March 5, 2026",
+      "text": "Okay... pros: amazing burgers, fresh bait, convenient. Cons: the cognitive dissonance of smelling grilled onions while staring at a bucket of minnows is real. Still came back for the steak. But I'm conflicted. 3.5 stars rounded down because my soul hurts.",
+      "item": "Grilled Steak + Mixed Feelings"
+    },
+    "replies": [
+      {
+        "avatar": "🐟",
+        "bgColor": "bg-teal-100",
+        "name": "Todd (Owner)",
+        "date": "Just now",
+        "text": "Sorry your butthurt soul can't handle a little real Michigan flavor, ConflictedFisherGal. Maybe try some yoga... or just order takeout and stay in your lane. We got burgers AND bait for a reason — life ain't all kale smoothies. Come back when you're ready for both. 😏",
+        "item": "Official Response"
+      }
+    ]
+  }
+]
