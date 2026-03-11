@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import MenuGrid from "./components/MenuGrid";
 import MobileHeader from "./components/MobileHeader";
 import ReviewsGrid from "./components/ReviewsGrid";
@@ -49,6 +51,7 @@ export default async function Home() {
                   src={featuredItem.image_url}
                   alt={featuredItem.name || "Featured menu item"}
                   className="w-full max-h-64 object-cover rounded-xl mb-4"
+                  loading="lazy"
                 />
               ) : (
                 <div className="w-full h-48 bg-gray-200 rounded-xl mb-4 flex items-center justify-center text-gray-500">

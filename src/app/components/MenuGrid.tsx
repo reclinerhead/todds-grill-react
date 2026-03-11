@@ -51,6 +51,7 @@ export default async function MenuGrid() {
                 className="w-full h-48 object-cover rounded mb-4"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 placeholder="blur"
+                loading="lazy"
                 blurDataURL={getTinyPlaceholder(
                   item.image_url || "/placeholder.png",
                 )}
