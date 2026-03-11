@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 export default function MobileHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -11,7 +12,12 @@ export default function MobileHeader() {
       style={{ backgroundColor: "rgba(30, 58, 138, 0.4)" }}
     >
       <div className="container mx-auto px-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Todds Grill and Bait Shop</h1>
+        <Link
+          href="/"
+          className="text-2xl md:text-3xl font-bold tracking-tight hover:text-orange-200 transition-colors"
+        >
+          Todd&apos;s Grill & Bait Shop
+        </Link>
         <nav className="hidden md:flex space-x-4">
           <a href="#menu" className="hover:text-orange-200">
             Menu
