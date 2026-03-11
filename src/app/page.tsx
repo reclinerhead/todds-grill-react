@@ -2,8 +2,11 @@ import MenuGrid from "./components/MenuGrid";
 import MobileHeader from "./components/MobileHeader";
 import ReviewsGrid from "./components/ReviewsGrid";
 import ContactForm from "./components/ContactForm";
+import { getFeaturedMenuItem } from "@/lib/supabase";
 
-export default function Home() {
+export default async function Home() {
+  const featuredItem = await getFeaturedMenuItem();
+
   return (
     <>
       {/* Header */}
@@ -32,11 +35,42 @@ export default function Home() {
             you need them.
           </p>
 
+          {/* Featured Menu Item Highlight */}
+          {featuredItem ? (
+            <div className="bg-white text-gray-800 rounded-2xl p-6 md:p-8 mb-10 max-w-2xl mx-auto shadow-lg">
+              <h2 className="text-2xl md:text-3xl font-semibold mb-3 text-orange-600">
+                Featured Today: {featuredItem.name}
+              </h2>
+
+              <p className="text-gray-700 mb-4">{featuredItem.description}</p>
+
+              {featuredItem.image_url ? (
+                <img
+                  src={featuredItem.image_url}
+                  alt={featuredItem.name || "Featured menu item"}
+                  className="w-full max-h-64 object-cover rounded-xl mb-4"
+                />
+              ) : (
+                <div className="w-full h-48 bg-gray-200 rounded-xl mb-4 flex items-center justify-center text-gray-500">
+                  No image available
+                </div>
+              )}
+
+              <p className="text-xl font-bold text-orange-600 mb-6">
+                {featuredItem.price}
+              </p>
+            </div>
+          ) : (
+            <p className="text-lg mb-10 opacity-90">
+              Check out our full menu below!
+            </p>
+          )}
+
           <a
             href="#menu"
             className="inline-block bg-orange-600 hover:bg-orange-700 text-white font-semibold text-lg md:text-xl px-8 py-4 md:px-10 md:py-5 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-orange-500 focus:ring-opacity-50"
           >
-            View Menu
+            View Full Menu
           </a>
         </div>
       </section>

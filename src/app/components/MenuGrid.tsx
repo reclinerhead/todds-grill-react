@@ -17,6 +17,7 @@ export default async function MenuGrid() {
   const { data: menuItems, error } = await supabase
     .from("menu_items")
     .select("*")
+    .eq("is_active", true) // only show active items
     .order("name", { ascending: true }); // sort alphabetically by name
 
   if (error) {
