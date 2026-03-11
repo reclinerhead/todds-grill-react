@@ -1,21 +1,33 @@
 import Image from "next/image";
-import fs from "fs/promises";
-import path from "path";
+import { supabase } from "@/lib/supabase";
 
 type MenuItem = {
+  id: string;
   name: string;
-  description: string;
+  description: string | null;
   price: string;
-  image: string;
+  image_url: string;
 };
 
 const getTinyPlaceholder = (src: string) =>
   `/_next/image?url=${encodeURIComponent(src)}&w=16&q=1`;
 
 export default async function MenuGrid() {
-  const filePath = path.join(process.cwd(), "data", "menu.json");
-  const jsonData = await fs.readFile(filePath, "utf-8");
-  const menuItems: MenuItem[] = JSON.parse(jsonData);
+  // query supabase for all menu items, sorted alphabetically by name
+  const { data: menuItems, error } = await supabase
+    .from("menu_items")
+    .select("*")
+    .order("name", { ascending: true }); // sort alphabetically by name
+
+  if (error) {
+    console.error("Supabase menu error:", error);
+    return (
+      <p className="text-red-600 text-center">Could not load menu right now.</p>
+    );
+  }
+
+  // cast our supabase data result to our MenuItem type
+  const items: MenuItem[] = menuItems || [];
 
   return (
     <section id="menu" className="py-16 bg-white">
@@ -25,20 +37,22 @@ export default async function MenuGrid() {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {menuItems.map((item, index) => (
+          {items.map((item, index) => (
             <div
               key={index}
               className="bg-gray-200 p-4 rounded shadow hover:shadow-lg transition-shadow"
             >
               <Image
-                src={item.image}
+                src={item.image_url || "/placeholder.png"}
                 alt={item.name}
                 width={465}
                 height={310}
                 className="w-full h-48 object-cover rounded mb-4"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 placeholder="blur"
-                blurDataURL={getTinyPlaceholder(item.image)}
+                blurDataURL={getTinyPlaceholder(
+                  item.image_url || "/placeholder.png",
+                )}
               />
               <h3 className="text-gray-600 text-xl font-semibold mb-2">
                 {item.name}

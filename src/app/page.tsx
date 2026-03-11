@@ -19,7 +19,7 @@ export default function Home() {
         }}
       >
         {/* Optional: subtle gradient overlay for better contrast */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/70" />
+        <div className="absolute inset-0 bg-linear-to-b from-black/30 via-black/50 to-black/70" />
 
         {/* Frosted glass card */}
         <div className="relative z-10 bg-white/10 backdrop-blur-sm border border-white/20 p-8 md:p-12 rounded-2xl text-center max-w-4xl mx-auto">
