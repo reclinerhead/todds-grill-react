@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Todd's Grill and Bait Shop",
+  title: "Todd's Grill and Bait",
   description: "Kalamazoo's best grilled food and fresh bait!",
 };
 

@@ -7,6 +7,7 @@ import ReviewsGrid from "./components/ReviewsGrid";
 import ContactForm from "./components/ContactForm";
 import { getFeaturedMenuItem } from "@/lib/supabase";
 import StatsBar from "./components/StatsBar";
+import PhotoGallery from "./components/PhotoGallery";
 
 export default async function Home() {
   const featuredItem = await getFeaturedMenuItem();
@@ -20,7 +21,7 @@ export default async function Home() {
       <section
         className="relative h-screen flex items-center justify-center text-white overflow-hidden"
         style={{
-          backgroundImage: "url('@/public/baitshop1.jpg')",
+          backgroundImage: "url('/baitshop1.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -31,7 +32,7 @@ export default async function Home() {
         {/* Frosted glass card */}
         <div className="relative z-10 bg-white/10 backdrop-blur-sm border border-white/20 p-8 md:p-12 rounded-2xl text-center max-w-4xl mx-auto">
           <h2 className="text-4xl md:text-6xl lg:text-4xl font-extrabold mb-4 md:mb-6 leading-tight drop-shadow-lg">
-            Welcome to Todd&apos;s Grill and Bait Shop
+            Welcome to Todd&apos;s Grill and Bait
           </h2>
 
           <p className="text-lg md:text-1xl mb-8 md:mb-10 text-gray-200 drop-shadow-md">
@@ -99,6 +100,9 @@ export default async function Home() {
 
       {/* Reviews Section */}
       <ReviewsGrid />
+
+      {/* Photo Gallery Section */}
+      <PhotoGallery />
 
       {/* Hours & Location Section */}
       <section id="hours" className="py-16 bg-orange-100">

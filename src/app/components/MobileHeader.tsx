@@ -16,7 +16,7 @@ export default function MobileHeader() {
           href="/"
           className="text-2xl md:text-3xl font-bold tracking-tight hover:text-orange-200 transition-colors"
         >
-          Todd&apos;s Grill & Bait Shop
+          Todd&apos;s Grill & Bait
         </Link>
         <nav className="hidden md:flex space-x-4">
           <a href="#menu" className="hover:text-orange-200">
@@ -24,6 +24,9 @@ export default function MobileHeader() {
           </a>
           <a href="#reviews" className="hover:text-orange-200">
             Reviews
+          </a>
+          <a href="#photos" className="hover:text-orange-200">
+            Photo Gallery
           </a>
           <a href="#hours" className="hover:text-orange-200">
             Hours & Location
