@@ -71,13 +71,10 @@ export default async function StatsBar() {
         <div className="flex flex-col items-center">
           <ThumbsDown className="w-12 h-12 text-violet-500 mb-4" />
           <div className="text-5xl font-bold text-violet-400 tracking-tighter">
-            ??
+            ?
           </div>
           <p className="text-zinc-400 text-sm uppercase tracking-widest mt-1">
-            <span>
-              Unhappy Customers - we don't keep track of these, but we hope it's
-              zero!
-            </span>
+            <span>Unhappy Customers (I'm sure its around zero.)</span>
           </p>
         </div>
       </div>
