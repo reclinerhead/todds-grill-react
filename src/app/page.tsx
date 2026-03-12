@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import Image from "next/image";
 import MenuGrid from "./components/MenuGrid";
 import MobileHeader from "./components/MobileHeader";
 import ReviewsGrid from "./components/ReviewsGrid";
@@ -19,7 +20,7 @@ export default async function Home() {
       <section
         className="relative h-screen flex items-center justify-center text-white overflow-hidden"
         style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80')`,
+          backgroundImage: "url('@/public/baitshop1.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -48,9 +49,11 @@ export default async function Home() {
               <p className="text-gray-700 mb-4">{featuredItem.description}</p>
 
               {featuredItem.image_url ? (
-                <img
+                <Image
                   src={featuredItem.image_url}
                   alt={featuredItem.name || "Featured menu item"}
+                  width={800}
+                  height={500}
                   className="w-full max-h-64 object-cover rounded-xl mb-4"
                   loading="lazy"
                 />
