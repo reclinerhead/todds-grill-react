@@ -22,7 +22,7 @@ export default async function StatsBar() {
 
   return (
     <div className="bg-zinc-900/95 backdrop-blur-md rounded-3xl p-8 md:p-10 shadow-2xl max-w-5xl mx-auto">
-      <div className="grid sm:grid-cols-3 lg:grid-cols-5 gap-8 text-center">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-8 text-center">
         {/* Years of Experience */}
         <div className="flex flex-col items-center">
           <UserCheck className="w-12 h-12 text-violet-500 mb-4" />
