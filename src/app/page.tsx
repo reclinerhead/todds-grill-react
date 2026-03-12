@@ -5,6 +5,7 @@ import MobileHeader from "./components/MobileHeader";
 import ReviewsGrid from "./components/ReviewsGrid";
 import ContactForm from "./components/ContactForm";
 import { getFeaturedMenuItem } from "@/lib/supabase";
+import StatsBar from "./components/StatsBar";
 
 export default async function Home() {
   const featuredItem = await getFeaturedMenuItem();
@@ -77,6 +78,18 @@ export default async function Home() {
           </a>
         </div>
       </section>
+
+      {/* ────────────────────────────────────────────────
+            NEW: The Stats Bar – positioned at the bottom
+            This is the key part you're adding
+        ──────────────────────────────────────────────── */}
+      <div
+        className="
+            py-12
+          "
+      >
+        <StatsBar />
+      </div>
 
       {/* Menu Section */}
       <MenuGrid />

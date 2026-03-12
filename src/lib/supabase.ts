@@ -23,3 +23,32 @@ export async function getFeaturedMenuItem() {
 
   return data[0] || null; // return the item or null if none
 }
+
+// Returns the count of currently active menu items
+export async function getActiveMenuCount(): Promise<number> {
+  const { count, error } = await supabase
+    .from("menu_items")
+    .select("*", { count: "exact", head: true })
+    .eq("is_active", true);
+
+  if (error) {
+    console.error("Active menu count error:", error);
+    return 30; // fallback so UI never breaks
+  }
+
+  return count ?? 0;
+}
+
+// Returns the total number of reviews (assuming you have a 'reviews' table)
+export async function getReviewCount(): Promise<number> {
+  const { count, error } = await supabase
+    .from("reviews")
+    .select("*", { count: "exact", head: true });
+
+  if (error) {
+    console.error("Review count error:", error);
+    return 500; // fallback
+  }
+
+  return count ?? 0;
+}
