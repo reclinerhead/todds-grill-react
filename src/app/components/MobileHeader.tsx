@@ -7,10 +7,7 @@ export default function MobileHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header
-      className="header-bg text-white py-4"
-      style={{ backgroundColor: "rgba(30, 58, 138, 0.4)" }}
-    >
+    <header className="sticky top-0 z-50  text-white py-4 bg-surface-dark">
       <div className="container mx-auto px-4 flex justify-between items-center">
         <Link
           href="/"

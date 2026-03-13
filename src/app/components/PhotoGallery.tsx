@@ -77,9 +77,9 @@ export default function PhotoGallery({
       />
 
       <div className="text-gray-800 italic mt-12 mb-12 max-w-5xl mx-auto px-4 text-center space-y-3 ">
-        <div className="text-2xl font-bold tracking-tight">
+        <h2 className="text-2xl font-bold tracking-tight">
           The Legend of Todd&apos;s Grill and Bait
-        </div>
+        </h2>
 
         <p>
           It all began back in the early days of 1912 along the banks of a

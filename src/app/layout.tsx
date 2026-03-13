@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 //import { Geist, Geist_Mono } from "next/font/google";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "sonner";
 
 // Primary font - for body text
 const inter = Inter({
@@ -23,7 +24,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} font-sans antialiased`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Toaster position="top-right" richColors theme="system" />
+      </body>
     </html>
   );
 }

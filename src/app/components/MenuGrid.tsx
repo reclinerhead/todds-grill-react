@@ -37,7 +37,7 @@ export default async function MenuGrid() {
           Our Menu
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-8">
           {items.map((item, index) => (
             <div
               key={index}
@@ -56,10 +56,12 @@ export default async function MenuGrid() {
                   item.image_url || "/placeholder.png",
                 )}
               />
-              <h3 className="text-gray-600 text-xl font-semibold mb-2">
+              <div className="text-gray-600 text-md font-bold mb-2 md:text-lg">
                 {item.name}
-              </h3>
-              <p className="text-gray-600 mb-2">{item.description}</p>
+              </div>
+              <p className="text-gray-600 mb-2 text-sm lg:text-base">
+                {item.description}
+              </p>
               <p className="font-bold text-orange-600">{item.price}</p>
             </div>
           ))}

@@ -5,12 +5,22 @@
   --foreground: #171717;
 }
 
-/* Override Tailwind's default font-sans to use Inter */
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-
+@theme {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* Brand / interactive */
+  --color-primary: oklch(0.72 0.14 260);
+  --color-primary-dark: oklch(0.65 0.14 260);
+  --color-accent: oklch(0.78 0.18 140);
+
+  /* Text */
+  --color-text: oklch(0.15 0.02 260);
+  --color-text-muted: oklch(0.45 0.02 260);
+
+  /* Surfaces / backgrounds */
+  --color-background: oklch(0.99 0.01 0);
+  --color-surface: oklch(0.98 0.01 0);
+  --color-surface-dark: oklch(17.809% 0.05739 264.545);
 }
 
 @media (prefers-color-scheme: dark) {
