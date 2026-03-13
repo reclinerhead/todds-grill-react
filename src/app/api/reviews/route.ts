@@ -4,6 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 const MAX_REVIEW_LENGTH = 1000;
 
 type ReviewPayload = {
+  productNames?: unknown;
   productName?: unknown;
   rating?: unknown;
   reviewText?: unknown;
@@ -21,8 +22,23 @@ export async function POST(request: Request) {
   try {
     const body = (await request.json()) as ReviewPayload;
 
-    const productName =
+    const productNamesFromArray = Array.isArray(body.productNames)
+      ? body.productNames
+          .filter((name): name is string => typeof name === "string")
+          .map((name) => name.trim())
+          .filter(Boolean)
+      : [];
+    const singleProductName =
       typeof body.productName === "string" ? body.productName.trim() : "";
+    const productNames = Array.from(
+      new Set(
+        productNamesFromArray.length > 0
+          ? productNamesFromArray
+          : singleProductName
+            ? [singleProductName]
+            : [],
+      ),
+    );
     const rating = typeof body.rating === "number" ? body.rating : 0;
     const reviewText =
       typeof body.reviewText === "string" ? body.reviewText.trim() : "";
@@ -31,9 +47,9 @@ export async function POST(request: Request) {
     const reviewerEmail =
       typeof body.reviewerEmail === "string" ? body.reviewerEmail.trim() : "";
 
-    if (!productName) {
+    if (productNames.length === 0) {
       return NextResponse.json(
-        { error: "Product name is required." },
+        { error: "At least one menu item is required." },
         { status: 400 },
       );
     }
@@ -67,16 +83,22 @@ export async function POST(request: Request) {
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    if (!supabaseUrl || !supabaseAnonKey) {
+    if (!supabaseUrl || !supabaseServiceRoleKey) {
       return NextResponse.json(
-        { error: "Server is missing Supabase configuration." },
+        { error: "Server review configuration is missing." },
         { status: 500 },
       );
     }
 
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    const supabase = createClient(supabaseUrl, supabaseServiceRoleKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    });
+
     const reviewerName = reviewerNameRaw || "Anonymous";
     const stars = "★".repeat(rating);
 
@@ -87,7 +109,7 @@ export async function POST(request: Request) {
       author_bg_color: "bg-orange-200",
       rating: stars,
       review_text: reviewText,
-      item_reviewed: productName,
+      item_reviewed: productNames.join(", "),
     });
 
     if (error) {

@@ -41,9 +41,14 @@ export default async function ReviewsGrid() {
   return (
     <section id="reviews" className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-12 text-orange-600">
+        <h2 className="text-3xl font-bold text-center mb-3 text-orange-600">
           What Our Customers Say
         </h2>
+        <div className="text-center mb-12 text-gray-600">
+          <a href="#submitreview" className="underline hover:text-orange-600">
+            Leave your own review - as long as its a good one!
+          </a>
+        </div>
 
         <div className="max-w-3xl mx-auto space-y-12">
           {topLevelReviews.map((review) => (

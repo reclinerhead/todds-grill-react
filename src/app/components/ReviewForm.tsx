@@ -22,7 +22,7 @@ const MAX_REVIEW_LENGTH = 1000;
 export default function ReviewForm() {
   const [menuOptions, setMenuOptions] = useState<MenuOption[]>([]);
   const [isLoadingMenuItems, setIsLoadingMenuItems] = useState(true);
-  const [productName, setProductName] = useState("");
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [reviewerName, setReviewerName] = useState("");
@@ -77,8 +77,8 @@ export default function ReviewForm() {
     const nextErrors: FormErrors = {};
     const emailTrimmed = reviewerEmail.trim();
 
-    if (!productName.trim()) {
-      nextErrors.productName = "Product name is required.";
+    if (selectedProducts.length === 0) {
+      nextErrors.productName = "Please select at least one menu item.";
     }
 
     if (rating < 1) {
@@ -102,13 +102,23 @@ export default function ReviewForm() {
   };
 
   const clearForm = () => {
-    setProductName("");
+    setSelectedProducts([]);
     setRating(0);
     setReviewText("");
     setReviewerName("");
     setReviewerEmail("");
     setErrors({});
     setHoveredRating(0);
+  };
+
+  const toggleProductSelection = (itemName: string) => {
+    setSelectedProducts((prev) =>
+      prev.includes(itemName)
+        ? prev.filter((name) => name !== itemName)
+        : [...prev, itemName],
+    );
+
+    setErrors((prev) => ({ ...prev, productName: undefined }));
   };
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -126,7 +136,7 @@ export default function ReviewForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          productName: productName.trim(),
+          productNames: selectedProducts,
           rating,
           reviewText: reviewText.trim(),
           reviewerName: reviewerName.trim(),
@@ -157,9 +167,9 @@ export default function ReviewForm() {
 
   return (
     <section
-      id="submit-review"
+      id="submitreview"
       aria-labelledby="submit-review-title"
-      className="py-16 bg-slate-100 dark:bg-slate-900"
+      className="py-16"
     >
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm shadow-xl p-6 md:p-8">
@@ -176,36 +186,96 @@ export default function ReviewForm() {
           <form className="mt-8 space-y-5" onSubmit={onSubmit} noValidate>
             <div>
               <label
-                htmlFor="productName"
+                htmlFor="productNames"
                 className="block text-sm font-medium text-slate-700 dark:text-slate-200"
               >
-                Product name <span aria-hidden="true">*</span>
+                Menu items reviewed <span aria-hidden="true">*</span>
               </label>
-              <select
-                id="productName"
-                name="productName"
-                value={productName}
-                onChange={(event) => setProductName(event.target.value)}
-                aria-required="true"
-                aria-invalid={Boolean(errors.productName)}
+
+              <div
+                id="productNames"
+                role="group"
+                aria-label="Menu items reviewed"
                 aria-describedby={
-                  errors.productName ? "productName-error" : undefined
+                  errors.productName ? "productName-error" : "productNames-help"
                 }
-                disabled={isLoadingMenuItems}
-                className="mt-1 w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2 text-slate-900 dark:text-slate-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
               >
-                <option value="">
-                  {isLoadingMenuItems
-                    ? "Loading menu items..."
-                    : "Select a menu item"}
-                </option>
-                {menuOptions.map((item) => (
-                  <option key={item.id} value={item.name}>
-                    {item.name}
-                    {item.is_active ? "" : " (inactive)"}
-                  </option>
-                ))}
-              </select>
+                <div className="mt-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 p-3 md:p-4">
+                  {isLoadingMenuItems ? (
+                    <p className="text-sm text-slate-500">
+                      Loading menu items...
+                    </p>
+                  ) : menuOptions.length === 0 ? (
+                    <p className="text-sm text-slate-500">
+                      No menu items available right now.
+                    </p>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1">
+                      {menuOptions.map((item) => {
+                        const isSelected = selectedProducts.includes(item.name);
+
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            onClick={() => toggleProductSelection(item.name)}
+                            aria-pressed={isSelected}
+                            className={`w-full rounded-lg border px-3 py-2 text-left transition focus:outline-none focus:ring-2 focus:ring-orange-500 ${
+                              isSelected
+                                ? "border-orange-500 bg-orange-50 dark:bg-orange-950/40 text-slate-900 dark:text-slate-100"
+                                : "border-slate-300 dark:border-slate-600 hover:border-orange-400 text-slate-700 dark:text-slate-200"
+                            }`}
+                          >
+                            <span className="flex items-center justify-between gap-2">
+                              <span className="font-medium">{item.name}</span>
+                              {!item.is_active && (
+                                <span className="rounded-full bg-slate-200 dark:bg-slate-700 px-2 py-0.5 text-xs text-slate-600 dark:text-slate-300">
+                                  inactive
+                                </span>
+                              )}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {selectedProducts.length > 0 && (
+                    <div className="mt-3 border-t border-slate-200 dark:border-slate-700 pt-3">
+                      <div className="flex items-center justify-between gap-3 mb-2">
+                        <p className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                          Selected ({selectedProducts.length})
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedProducts([])}
+                          className="text-xs font-semibold text-orange-600 hover:text-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 rounded"
+                        >
+                          Clear all
+                        </button>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedProducts.map((itemName) => (
+                          <button
+                            key={itemName}
+                            type="button"
+                            onClick={() => toggleProductSelection(itemName)}
+                            className="rounded-full bg-orange-100 dark:bg-orange-900/40 px-3 py-1 text-xs font-semibold text-orange-700 dark:text-orange-300 hover:bg-orange-200 dark:hover:bg-orange-800/40 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            aria-label={`Remove ${itemName}`}
+                          >
+                            {itemName} x
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <p id="productNames-help" className="mt-1 text-xs text-slate-500">
+                Tap items to select multiple. Tap a selected item again to
+                remove it.
+              </p>
               {errors.productName && (
                 <p id="productName-error" className="mt-1 text-sm text-red-600">
                   {errors.productName}
