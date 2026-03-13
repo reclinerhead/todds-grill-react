@@ -31,23 +31,22 @@ export default async function Home() {
 
         {/* Frosted glass card */}
         <div className="relative z-10 bg-white/10 backdrop-blur-sm border border-white/20 p-8 md:p-12 rounded-2xl text-center max-w-4xl mx-auto">
-          <h2 className="text-4xl md:text-6xl lg:text-4xl font-extrabold mb-4 md:mb-6 leading-tight drop-shadow-lg">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-blue-300">
             Welcome to Todd&apos;s Grill and Bait
-          </h2>
+          </h1>
 
-          <p className="text-lg md:text-1xl mb-8 md:mb-10 text-gray-200 drop-shadow-md">
-            The best grilled food in town. And fresh minnows and wrigglers when
-            you need them.
+          <p className="mt-4 text-em md:text-md text-blue-100 max-w-2xl mx-auto pb-6">
+            Burgers and bait - what else could you ask for?
           </p>
 
           {/* Featured Menu Item Highlight */}
           {featuredItem ? (
-            <div className="bg-white text-gray-800 rounded-2xl p-6 md:p-8 mb-10 max-w-2xl mx-auto shadow-lg">
+            <div className="bg-gray-800 text-gray-300 rounded-2xl p-6 md:p-8 mb-10 max-w-2xl mx-auto shadow-lg">
               <h2 className="text-2xl md:text-3xl font-semibold mb-3 text-orange-600">
                 Featured Today: {featuredItem.name}
               </h2>
 
-              <p className="text-gray-700 mb-4">{featuredItem.description}</p>
+              <p className="text-gray-400 mb-4">{featuredItem.description}</p>
 
               {featuredItem.image_url ? (
                 <Image
