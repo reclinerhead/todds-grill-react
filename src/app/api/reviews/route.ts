@@ -118,6 +118,7 @@ export async function POST(request: Request) {
       rating,
       reviewText,
       reviewerName: reviewerNameRaw,
+      reviewerEmail: reviewerEmailRaw,
     } = parsed.data;
 
     const productNames = Array.from(
@@ -141,11 +142,12 @@ export async function POST(request: Request) {
       .get("x-forwarded-for")
       ?.split(",")[0]
       ?.trim();
+
+    // verify our hCaptcha token before doing anything else
     const captchaVerification = await verifyHCaptchaToken(
       hcaptchaToken,
       remoteIp,
     );
-
     if (!captchaVerification.ok) {
       if (captchaVerification.details) {
         console.error(
@@ -221,12 +223,14 @@ export async function POST(request: Request) {
     }
 
     const reviewerName = reviewerNameRaw || "Anonymous";
+    const reviewerEmail = reviewerEmailRaw || null;
     const stars = "★".repeat(rating);
 
     const { error } = await supabase.from("reviews").insert({
       parent_id: null,
       user_id: activeUser.id,
       author_name: reviewerName,
+      author_email: reviewerEmail,
       author_avatar: getInitialForAvatar(reviewerName),
       author_bg_color: "bg-orange-200",
       rating: stars,
