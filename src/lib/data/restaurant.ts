@@ -5,8 +5,8 @@ import type { Review, MenuItem } from "@/types/restaurant";
 // MENU ITEMS
 /////////////////////
 
-// Returns all the active menu items for the page
-export async function getMenuItemsForGrid(): Promise<MenuItem[]> {
+// Returns all the active menu items for the page, or null if the query failed
+export async function getMenuItemsForGrid(): Promise<MenuItem[] | null> {
   const supabase = await createSupabaseServerClient();
   const { data: menuItemsData, error } = await supabase
     .from("menu_items")
@@ -16,7 +16,7 @@ export async function getMenuItemsForGrid(): Promise<MenuItem[]> {
 
   if (error) {
     console.error("Menu items retrieval error:", error);
-    return []; // fallback
+    return null;
   }
   return menuItemsData ?? [];
 }
@@ -71,8 +71,8 @@ export async function getReviewCount(): Promise<number> {
   return count ?? 0;
 }
 
-// Returns all reviews for the page
-export async function getReviewsForGrid(): Promise<Review[]> {
+// Returns all reviews for the page, or null if the query failed
+export async function getReviewsForGrid(): Promise<Review[] | null> {
   const supabase = await createSupabaseServerClient();
   const { data: reviewsData, error } = await supabase
     .from("reviews")
@@ -81,7 +81,7 @@ export async function getReviewsForGrid(): Promise<Review[]> {
 
   if (error) {
     console.error("Review retrieval error:", error);
-    return []; // fallback
+    return null;
   }
   return reviewsData ?? [];
 }

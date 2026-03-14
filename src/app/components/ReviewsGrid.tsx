@@ -6,6 +6,16 @@ export default async function ReviewsGrid() {
   // load our review data from the server
   const reviews = await getReviewsForGrid();
 
+  if (reviews === null) {
+    return (
+      <section id="reviews" className="py-16 bg-gray-50">
+        <p className="text-center text-red-500">
+          Could not load reviews right now. Please try again later.
+        </p>
+      </section>
+    );
+  }
+
   // Find top-level reviews (no parent)
   const topLevelReviews = reviews.filter((r) => r.parent_id === null);
 
