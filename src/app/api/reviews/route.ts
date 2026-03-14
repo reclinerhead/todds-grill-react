@@ -1,16 +1,34 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { z } from "zod";
 
-const MAX_REVIEW_LENGTH = 1000;
-
-type ReviewPayload = {
-  productNames?: unknown;
-  productName?: unknown;
-  rating?: unknown;
-  reviewText?: unknown;
-  reviewerName?: unknown;
-  reviewerEmail?: unknown;
-};
+/* review schema and validation rules */
+const reviewSchema = z
+  .object({
+    hcaptchaToken: z
+      .string()
+      .trim()
+      .min(1, "Please complete the captcha challenge."),
+    productNames: z.array(z.string().trim().min(1).max(200)).optional(),
+    productName: z.string().trim().min(1).max(200).optional(),
+    rating: z.number().int().min(1).max(5),
+    reviewText: z.string().trim().min(1, "Review required").max(1000),
+    reviewerName: z.string().trim().max(100).optional().or(z.literal("")),
+    reviewerEmail: z.preprocess(
+      (value) => (typeof value === "string" ? value.trim() : value),
+      z.union([z.literal(""), z.email().max(150)]).optional(),
+    ),
+  })
+  .refine(
+    (data) => {
+      const multiCount = data.productNames?.length ?? 0;
+      return multiCount > 0 || Boolean(data.productName);
+    },
+    {
+      message: "At least one menu item is required.",
+      path: ["productNames"],
+    },
+  );
 
 const getInitialForAvatar = (name: string) => {
   const trimmed = name.trim();
@@ -18,34 +36,82 @@ const getInitialForAvatar = (name: string) => {
   return trimmed[0].toUpperCase();
 };
 
+async function verifyHCaptchaToken(token: string, remoteIp?: string) {
+  const hcaptchaSecret = process.env.HCAPTCHA_SECRET_KEY;
+
+  if (!hcaptchaSecret) {
+    return { ok: false, error: "Server captcha configuration is missing." };
+  }
+
+  const params = new URLSearchParams({
+    secret: hcaptchaSecret,
+    response: token,
+  });
+
+  if (remoteIp) {
+    params.set("remoteip", remoteIp);
+  }
+
+  const response = await fetch("https://hcaptcha.com/siteverify", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: params.toString(),
+  });
+
+  if (!response.ok) {
+    return { ok: false, error: "Captcha verification failed." };
+  }
+
+  const data = (await response.json()) as {
+    success?: boolean;
+    "error-codes"?: string[];
+  };
+
+  if (!data.success) {
+    return {
+      ok: false,
+      error: "Captcha verification failed. Please try again.",
+      details: data["error-codes"],
+    };
+  }
+
+  return { ok: true };
+}
+
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as ReviewPayload;
+    const rawBody = await request.json();
+    const parsed = reviewSchema.safeParse(rawBody);
 
-    const productNamesFromArray = Array.isArray(body.productNames)
-      ? body.productNames
-          .filter((name): name is string => typeof name === "string")
-          .map((name) => name.trim())
-          .filter(Boolean)
-      : [];
-    const singleProductName =
-      typeof body.productName === "string" ? body.productName.trim() : "";
+    if (!parsed.success) {
+      return NextResponse.json(
+        {
+          error: parsed.error.issues[0]?.message || "Invalid request payload.",
+        },
+        { status: 400 },
+      );
+    }
+
+    const {
+      hcaptchaToken,
+      productNames: parsedProductNames,
+      productName,
+      rating,
+      reviewText,
+      reviewerName: reviewerNameRaw,
+    } = parsed.data;
+
     const productNames = Array.from(
       new Set(
-        productNamesFromArray.length > 0
-          ? productNamesFromArray
-          : singleProductName
-            ? [singleProductName]
+        (parsedProductNames?.length ?? 0) > 0
+          ? parsedProductNames
+          : productName
+            ? [productName]
             : [],
       ),
     );
-    const rating = typeof body.rating === "number" ? body.rating : 0;
-    const reviewText =
-      typeof body.reviewText === "string" ? body.reviewText.trim() : "";
-    const reviewerNameRaw =
-      typeof body.reviewerName === "string" ? body.reviewerName.trim() : "";
-    const reviewerEmail =
-      typeof body.reviewerEmail === "string" ? body.reviewerEmail.trim() : "";
 
     if (productNames.length === 0) {
       return NextResponse.json(
@@ -54,36 +120,37 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
-      return NextResponse.json(
-        { error: "Rating must be an integer between 1 and 5." },
-        { status: 400 },
-      );
-    }
+    const remoteIp = request.headers
+      .get("x-forwarded-for")
+      ?.split(",")[0]
+      ?.trim();
+    const captchaVerification = await verifyHCaptchaToken(
+      hcaptchaToken,
+      remoteIp,
+    );
 
-    if (!reviewText) {
-      return NextResponse.json(
-        { error: "Review text is required." },
-        { status: 400 },
-      );
-    }
+    if (!captchaVerification.ok) {
+      if (captchaVerification.details) {
+        console.error(
+          "hCaptcha verification error:",
+          captchaVerification.details,
+        );
+      }
 
-    if (reviewText.length > MAX_REVIEW_LENGTH) {
       return NextResponse.json(
-        { error: `Review must be ${MAX_REVIEW_LENGTH} characters or less.` },
-        { status: 400 },
-      );
-    }
-
-    if (reviewerEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(reviewerEmail)) {
-      return NextResponse.json(
-        { error: "Please provide a valid email address." },
-        { status: 400 },
+        { error: captchaVerification.error },
+        {
+          status:
+            captchaVerification.error ===
+            "Server captcha configuration is missing."
+              ? 500
+              : 403,
+        },
       );
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const supabaseServiceRoleKey = "";
 
     if (!supabaseUrl || !supabaseServiceRoleKey) {
       return NextResponse.json(

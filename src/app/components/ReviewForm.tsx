@@ -1,10 +1,12 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { Star } from "lucide-react";
 import { toast } from "sonner";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 type FormErrors = {
+  captcha?: string;
   productName?: string;
   rating?: string;
   reviewText?: string;
@@ -18,8 +20,10 @@ type MenuOption = {
 };
 
 const MAX_REVIEW_LENGTH = 1000;
+const HCAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY;
 
 export default function ReviewForm() {
+  const captchaRef = useRef<InstanceType<typeof HCaptcha> | null>(null);
   const [menuOptions, setMenuOptions] = useState<MenuOption[]>([]);
   const [isLoadingMenuItems, setIsLoadingMenuItems] = useState(true);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
@@ -27,6 +31,7 @@ export default function ReviewForm() {
   const [reviewText, setReviewText] = useState("");
   const [reviewerName, setReviewerName] = useState("");
   const [reviewerEmail, setReviewerEmail] = useState("");
+  const [captchaToken, setCaptchaToken] = useState("");
   const [hoveredRating, setHoveredRating] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
@@ -77,6 +82,10 @@ export default function ReviewForm() {
     const nextErrors: FormErrors = {};
     const emailTrimmed = reviewerEmail.trim();
 
+    if (!HCAPTCHA_SITE_KEY) {
+      nextErrors.captcha = "Captcha is not configured yet.";
+    }
+
     if (selectedProducts.length === 0) {
       nextErrors.productName = "Please select at least one menu item.";
     }
@@ -97,6 +106,10 @@ export default function ReviewForm() {
       nextErrors.reviewerEmail = "Please enter a valid email address.";
     }
 
+    if (!captchaToken) {
+      nextErrors.captcha = "Please complete the captcha challenge.";
+    }
+
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -107,8 +120,10 @@ export default function ReviewForm() {
     setReviewText("");
     setReviewerName("");
     setReviewerEmail("");
+    setCaptchaToken("");
     setErrors({});
     setHoveredRating(0);
+    captchaRef.current?.resetCaptcha();
   };
 
   const toggleProductSelection = (itemName: string) => {
@@ -119,6 +134,23 @@ export default function ReviewForm() {
     );
 
     setErrors((prev) => ({ ...prev, productName: undefined }));
+  };
+
+  const onCaptchaVerify = (token: string | null) => {
+    setCaptchaToken(token || "");
+    setErrors((prev) => ({ ...prev, captcha: undefined }));
+  };
+
+  const onCaptchaExpire = () => {
+    setCaptchaToken("");
+  };
+
+  const onCaptchaError = () => {
+    setCaptchaToken("");
+    setErrors((prev) => ({
+      ...prev,
+      captcha: "Captcha could not be loaded. Please try again.",
+    }));
   };
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -136,6 +168,7 @@ export default function ReviewForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          hcaptchaToken: captchaToken,
           productNames: selectedProducts,
           rating,
           reviewText: reviewText.trim(),
@@ -146,6 +179,10 @@ export default function ReviewForm() {
 
       if (!response.ok) {
         const data = (await response.json()) as { error?: string };
+        if (response.status === 400 || response.status === 403) {
+          setCaptchaToken("");
+          captchaRef.current?.resetCaptcha();
+        }
         throw new Error(data.error || "Unable to submit review.");
       }
 
@@ -409,9 +446,34 @@ export default function ReviewForm() {
               </div>
             </div>
 
+            <div>
+              <span className="block text-sm font-medium text-slate-700 dark:text-slate-200">
+                Security check <span aria-hidden="true">*</span>
+              </span>
+              <div className="mt-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 p-3">
+                {HCAPTCHA_SITE_KEY ? (
+                  <HCaptcha
+                    ref={captchaRef}
+                    sitekey={HCAPTCHA_SITE_KEY}
+                    onVerify={onCaptchaVerify}
+                    onExpire={onCaptchaExpire}
+                    onError={onCaptchaError}
+                  />
+                ) : (
+                  <p className="text-sm text-slate-500">
+                    hCaptcha site key is missing. Set
+                    NEXT_PUBLIC_HCAPTCHA_SITE_KEY to enable review protection.
+                  </p>
+                )}
+              </div>
+              {errors.captcha && (
+                <p className="mt-1 text-sm text-red-600">{errors.captcha}</p>
+              )}
+            </div>
+
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !HCAPTCHA_SITE_KEY}
               className="inline-flex items-center justify-center rounded-lg bg-orange-600 px-5 py-2.5 font-semibold text-white shadow-md transition hover:bg-orange-700 disabled:cursor-not-allowed disabled:bg-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
               {isSubmitting ? "Submitting..." : "Submit review"}
