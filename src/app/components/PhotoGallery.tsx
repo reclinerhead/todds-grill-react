@@ -23,6 +23,7 @@ export default function PhotoGallery({
     "/gallery/f69599c6-e679-4a41-ba35-c15ded76e67d.jpg",
     "/gallery/eddb89b7-7e91-4365-bdbd-250662e07fb3.jpg",
     "/gallery/grok-image-d2895105-ae52-4a64-9e41-3ac3fda73bac.png",
+    "/gallery/grok-image-f7d53fe4-b31a-492b-b0f8-0ce3ad46a5c4.png",
   ],
   title = "Customer Photo Gallery",
 }: PhotoGalleryProps) {
