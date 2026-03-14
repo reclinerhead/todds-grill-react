@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { Star } from "lucide-react";
 import { toast } from "sonner";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
+import { submitReview } from "@/app/actions/reviews";
 
 type FormErrors = {
   captcha?: string;
@@ -164,26 +165,22 @@ export default function ReviewForm() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/reviews", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          hcaptchaToken: captchaToken,
-          productNames: selectedProducts,
-          rating,
-          reviewText: reviewText.trim(),
-          reviewerName: reviewerName.trim(),
-          reviewerEmail: reviewerEmail.trim(),
-        }),
+      const result = await submitReview({
+        hcaptchaToken: captchaToken,
+        productNames: selectedProducts,
+        rating,
+        reviewText: reviewText.trim(),
+        reviewerName: reviewerName.trim(),
+        reviewerEmail: reviewerEmail.trim(),
       });
 
-      if (!response.ok) {
-        const data = (await response.json()) as { error?: string };
-        if (response.status === 400 || response.status === 403) {
+      if (!result.ok) {
+        if (result.resetCaptcha) {
           setCaptchaToken("");
           captchaRef.current?.resetCaptcha();
         }
-        throw new Error(data.error || "Unable to submit review.");
+
+        throw new Error(result.error || "Unable to submit review.");
       }
 
       toast.success("Thanks! Your review has been submitted.");
