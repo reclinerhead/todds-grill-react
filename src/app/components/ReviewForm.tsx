@@ -4,6 +4,10 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { Star } from "lucide-react";
 import { toast } from "sonner";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
+import {
+  getReviewFormMenuItems,
+  type ReviewFormMenuOption,
+} from "@/app/actions/menu-items";
 import { submitReview } from "@/app/actions/reviews";
 
 type FormErrors = {
@@ -14,18 +18,12 @@ type FormErrors = {
   reviewerEmail?: string;
 };
 
-type MenuOption = {
-  id: string;
-  name: string;
-  is_active: boolean;
-};
-
 const MAX_REVIEW_LENGTH = 1000;
 const HCAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY;
 
 export default function ReviewForm() {
   const captchaRef = useRef<InstanceType<typeof HCaptcha> | null>(null);
-  const [menuOptions, setMenuOptions] = useState<MenuOption[]>([]);
+  const [menuOptions, setMenuOptions] = useState<ReviewFormMenuOption[]>([]);
   const [isLoadingMenuItems, setIsLoadingMenuItems] = useState(true);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [rating, setRating] = useState(0);
@@ -38,44 +36,41 @@ export default function ReviewForm() {
   const [errors, setErrors] = useState<FormErrors>({});
 
   useEffect(() => {
-    const abortController = new AbortController();
+    let isActive = true;
 
     const fetchMenuItems = async () => {
       setIsLoadingMenuItems(true);
 
       try {
-        const response = await fetch("/api/menu-items", {
-          method: "GET",
-          signal: abortController.signal,
-        });
+        const result = await getReviewFormMenuItems();
 
-        if (!response.ok) {
-          const data = (await response.json()) as { error?: string };
-          throw new Error(data.error || "Unable to load menu items.");
+        if (!isActive) return;
+
+        if (result.error) {
+          throw new Error(result.error);
         }
 
-        const data = (await response.json()) as { items?: MenuOption[] };
-        const items = data.items ?? [];
+        const items = result.items;
 
         items.sort((a, b) => a.name.localeCompare(b.name));
         setMenuOptions(items);
       } catch (error) {
-        if (abortController.signal.aborted) return;
+        if (!isActive) return;
 
         const message =
           error instanceof Error ? error.message : "Unable to load menu items.";
         toast.error(message);
       } finally {
-        if (!abortController.signal.aborted) {
+        if (isActive) {
           setIsLoadingMenuItems(false);
         }
       }
     };
 
-    fetchMenuItems();
+    void fetchMenuItems();
 
     return () => {
-      abortController.abort();
+      isActive = false;
     };
   }, []);
 
