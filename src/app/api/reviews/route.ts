@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
+import { createSupabaseServerClient } from "../../../lib/supabase/server";
 
 /* review schema and validation rules */
 const reviewSchema = z
@@ -149,28 +149,48 @@ export async function POST(request: Request) {
       );
     }
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseServiceRoleKey = "";
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user: existingUser },
+      error: userError,
+    } = await supabase.auth.getUser();
 
-    if (!supabaseUrl || !supabaseServiceRoleKey) {
+    const isMissingSessionError = userError?.name === "AuthSessionMissingError";
+
+    if (userError && !isMissingSessionError) {
+      console.error("Supabase getUser error:", userError);
       return NextResponse.json(
-        { error: "Server review configuration is missing." },
+        { error: "Unable to verify user session." },
         { status: 500 },
       );
     }
 
-    const supabase = createClient(supabaseUrl, supabaseServiceRoleKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    });
+    let activeUser = existingUser;
+
+    if (!activeUser) {
+      const { data: anonymousAuthData, error: anonymousSignInError } =
+        await supabase.auth.signInAnonymously();
+
+      if (anonymousSignInError || !anonymousAuthData.user) {
+        console.error(
+          "Supabase anonymous sign-in error:",
+          anonymousSignInError,
+        );
+        return NextResponse.json(
+          { error: "Unable to start anonymous session." },
+          { status: 500 },
+        );
+      }
+
+      activeUser = anonymousAuthData.user;
+    }
 
     const reviewerName = reviewerNameRaw || "Anonymous";
     const stars = "★".repeat(rating);
 
     const { error } = await supabase.from("reviews").insert({
       parent_id: null,
+      user_id: activeUser.id,
       author_name: reviewerName,
       author_avatar: getInitialForAvatar(reviewerName),
       author_bg_color: "bg-orange-200",
