@@ -80,6 +80,23 @@ async function verifyHCaptchaToken(token: string, remoteIp?: string) {
   return { ok: true };
 }
 
+function isSupabaseCaptchaError(error: unknown) {
+  if (!error || typeof error !== "object") return false;
+
+  const candidate = error as {
+    message?: string;
+    code?: string;
+    name?: string;
+  };
+
+  const markerText = [candidate.message, candidate.code, candidate.name]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return markerText.includes("captcha") || markerText.includes("hcaptcha");
+}
+
 export async function POST(request: Request) {
   try {
     const rawBody = await request.json();
@@ -169,13 +186,31 @@ export async function POST(request: Request) {
 
     if (!activeUser) {
       const { data: anonymousAuthData, error: anonymousSignInError } =
-        await supabase.auth.signInAnonymously();
+        await supabase.auth.signInAnonymously({
+          options: {
+            captchaToken: hcaptchaToken,
+          },
+        });
 
       if (anonymousSignInError || !anonymousAuthData.user) {
         console.error(
           "Supabase anonymous sign-in error:",
           anonymousSignInError,
         );
+
+        if (
+          anonymousSignInError &&
+          isSupabaseCaptchaError(anonymousSignInError)
+        ) {
+          return NextResponse.json(
+            {
+              error:
+                "Captcha verification failed while starting your session. Please complete the challenge again and resubmit.",
+            },
+            { status: 403 },
+          );
+        }
+
         return NextResponse.json(
           { error: "Unable to start anonymous session." },
           { status: 500 },
