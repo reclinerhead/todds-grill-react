@@ -6,7 +6,7 @@ import MobileHeader from "./components/MobileHeader";
 import ReviewsGrid from "./components/ReviewsGrid";
 import ContactForm from "./components/ContactForm";
 import ReviewForm from "./components/ReviewForm";
-import { getFeaturedMenuItem } from "@/lib/supabase";
+import { getFeaturedMenuItem } from "@/lib/data/restaurant";
 import StatsBar from "./components/StatsBar";
 import PhotoGallery from "./components/PhotoGallery";
 
@@ -87,11 +87,7 @@ export default async function Home() {
             NEW: The Stats Bar – positioned at the bottom
             This is the key part you're adding
         ──────────────────────────────────────────────── */}
-          <div
-            className="
-            py-12
-          "
-          >
+          <div className="py-12">
             <StatsBar />
           </div>
 

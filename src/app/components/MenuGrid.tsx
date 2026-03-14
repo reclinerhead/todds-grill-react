@@ -1,34 +1,12 @@
+import { getMenuItemsForGrid } from "@/lib/data/restaurant";
 import Image from "next/image";
-import { supabase } from "@/lib/supabase";
-
-type MenuItem = {
-  id: string;
-  name: string;
-  description: string | null;
-  price: string;
-  image_url: string;
-};
 
 const getTinyPlaceholder = (src: string) =>
   `/_next/image?url=${encodeURIComponent(src)}&w=16&q=1`;
 
 export default async function MenuGrid() {
-  // query supabase for all menu items, sorted alphabetically by name
-  const { data: menuItems, error } = await supabase
-    .from("menu_items")
-    .select("*")
-    .eq("is_active", true) // only show active items
-    .order("name", { ascending: true }); // sort alphabetically by name
-
-  if (error) {
-    console.error("Supabase menu error:", error);
-    return (
-      <p className="text-red-600 text-center">Could not load menu right now.</p>
-    );
-  }
-
-  // cast our supabase data result to our MenuItem type
-  const items: MenuItem[] = menuItems || [];
+  // get the active menu items from the database library
+  const items = await getMenuItemsForGrid();
 
   return (
     <section id="menu" className="py-16 bg-white">

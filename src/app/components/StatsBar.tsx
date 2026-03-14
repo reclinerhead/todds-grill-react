@@ -1,8 +1,6 @@
-/* eslint-disable react/no-unescaped-entities */
-// components/StatsBar.tsx
-// Server Component - fetches live stats using our shared Supabase helpers
+// Server Component - fetches live stats using our shared Supabase data helpers in lib/data
+import { getActiveMenuCount, getReviewCount } from "@/lib/data/restaurant";
 
-import { getActiveMenuCount, getReviewCount } from "@/lib/supabase";
 import {
   UserCheck,
   ClipboardList,
@@ -74,7 +72,7 @@ export default async function StatsBar() {
             ?
           </div>
           <p className="text-zinc-400 text-sm uppercase tracking-widest mt-1">
-            <span>Unhappy Customers (I'm sure its around zero.)</span>
+            <span>Unhappy Customers (I&apos;m sure its around zero.)</span>
           </p>
         </div>
       </div>

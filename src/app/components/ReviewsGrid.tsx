@@ -1,35 +1,10 @@
-import { supabase } from "@/lib/supabase";
 import { formatFullDate, formatSmartDate } from "@/lib/formatDate";
 
-type Review = {
-  id: number;
-  parent_id: string | null;
-  author_name: string;
-  author_avatar: string | null;
-  author_bg_color: string | null;
-  rating: string | null;
-  review_text: string;
-  item_reviewed: string | null;
-  created_at: string;
-};
+import { getReviewsForGrid } from "@/lib/data/restaurant";
 
 export default async function ReviewsGrid() {
-  // Fetch all reviews from Supabase
-  const { data: reviewsData, error } = await supabase
-    .from("reviews")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error("Supabase fetch error:", error);
-    return (
-      <p className="text-red-600 text-center">
-        Could not load reviews right now.
-      </p>
-    );
-  }
-
-  const reviews: Review[] = reviewsData || [];
+  // load our review data from the server
+  const reviews = await getReviewsForGrid();
 
   // Find top-level reviews (no parent)
   const topLevelReviews = reviews.filter((r) => r.parent_id === null);

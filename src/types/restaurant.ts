@@ -9,3 +9,11 @@ export type Review = {
   item_reviewed: string | null;
   created_at: string; // ISO string like "2026-03-11T15:46:23.345687+00"
 };
+
+export type MenuItem = {
+  id: string;
+  name: string;
+  description: string | null;
+  price: string;
+  image_url: string;
+};
