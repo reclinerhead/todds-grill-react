@@ -93,7 +93,7 @@ export default function MobileHeader() {
             role="dialog"
             aria-modal="true"
             aria-label="Talk to Manager"
-            className="relative h-[85vh] w-full max-w-2xl overflow-hidden rounded-2xl border border-orange-300/30 bg-gray-900 shadow-2xl"
+            className="relative h-[65vh] md:h-[85vh] w-full max-w-2xl overflow-hidden rounded-2xl border border-orange-300/30 bg-gray-900 shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between bg-slate-900 px-4 py-2 text-white">
