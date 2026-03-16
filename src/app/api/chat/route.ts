@@ -1,5 +1,8 @@
 import { xai } from "@ai-sdk/xai";
-import { streamText, convertToModelMessages } from "ai"; // <-- add this import!
+import { streamText, convertToModelMessages } from "ai";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+import { NextRequest, NextResponse } from "next/server";
 
 export const maxDuration = 30;
 
@@ -30,12 +33,30 @@ function getAllowedOrigin(req: Request): string | null {
   return allowedOrigins.includes(origin) ? origin : null;
 }
 
+// Create Redis client once (outside handler for reuse)
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
+
+// Rate limit: 15 messages per minute per IP (adjust as you learn)
+const ratelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(15, "60 s"), // 15 requests in a 60-second sliding window
+  prefix: "chat:rl:", // helps organize keys in Redis
+  analytics: true, // optional: see usage in Upstash dashboard
+});
+
+// pre-flight check to validate allowed origins
 export async function OPTIONS(req: Request) {
   const allowedOrigin = getAllowedOrigin(req);
+
+  // not allowed
   if (!allowedOrigin) {
     return new Response("Not allowed from this origin", { status: 403 });
   }
 
+  // ok for pre-flight, just return CORS headers with no body
   return new Response(null, {
     status: 204,
     headers: getCorsHeaders(allowedOrigin),
@@ -43,6 +64,27 @@ export async function OPTIONS(req: Request) {
 }
 
 export async function POST(req: Request) {
+  // Get client IP for rate limiting (handle proxies with x-forwarded-for)
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "anonymous";
+
+  // Check rate limit
+  const { success, pending, limit, reset, remaining } =
+    await ratelimit.limit(ip);
+  if (!success) {
+    // Return friendly 429 error
+    return NextResponse.json(
+      {
+        error: "Too many messages! Please wait a minute and try again.",
+        details: {
+          limit, // max allowed
+          remaining, // how many left (0 here)
+          resetInMs: reset - Date.now(), // time until reset
+        },
+      },
+      { status: 429 },
+    );
+  }
+
   const allowedOrigin = getAllowedOrigin(req);
   if (!allowedOrigin) {
     return new Response("Not allowed from this origin", { status: 403 });
