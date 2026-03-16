@@ -64,26 +64,32 @@ export async function OPTIONS(req: Request) {
 }
 
 export async function POST(req: Request) {
+  const start = Date.now();
+
   // Get client IP for rate limiting (handle proxies with x-forwarded-for)
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "anonymous";
 
   // Check rate limit
   const { success, pending, limit, reset, remaining } =
     await ratelimit.limit(ip);
+
   if (!success) {
-    // Return friendly 429 error
     return NextResponse.json(
       {
-        error: "Too many messages! Please wait a minute and try again.",
-        details: {
-          limit, // max allowed
-          remaining, // how many left (0 here)
-          resetInMs: reset - Date.now(), // time until reset
+        error: "Whoa, slow down! You've hit the message limit.",
+        retryAfter: Math.ceil((reset - Date.now()) / 1000), // seconds until reset
+      },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(Math.ceil((reset - Date.now()) / 1000)),
         },
       },
-      { status: 429 },
     );
   }
+
+  const rlTime = Date.now() - start;
+  console.log(`Rate limit check took ${rlTime}ms for IP ${ip}`);
 
   const allowedOrigin = getAllowedOrigin(req);
   if (!allowedOrigin) {
