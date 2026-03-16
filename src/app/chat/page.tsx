@@ -41,7 +41,8 @@ export default function ChatPage() {
   return (
     <div className="flex flex-col h-screen max-w-2xl mx-auto p-4 bg-gray-950 text-white">
       <h1 className="text-2xl font-bold mb-4 text-center">
-        AI Chat (Support or Jokes mode)
+        Talk to Karen, the Manager, or Todd, the Owner! Ask about the menu,
+        hours, or just say hi. (Hint: Karen&apos;s got jokes 😏)
       </h1>
 
       {/* Messages area */}

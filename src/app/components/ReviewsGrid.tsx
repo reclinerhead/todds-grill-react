@@ -35,7 +35,7 @@ export default async function ReviewsGrid() {
           </a>
         </div>
 
-        <div className="max-w-3xl mx-auto space-y-12">
+        <div className="max-w-3xl mx-auto space-y-6">
           {topLevelReviews.map((review) => (
             <div key={review.id}>
               {/* Parent / Standalone Review Card */}
