@@ -107,7 +107,7 @@ ${comment}
 """`.trim();
 
   const { text } = await generateText({
-    model: xai("grok-3-mini-fast"),
+    model: xai("grok-4-1-fast-reasoning"),
     temperature,
     system,
     prompt,
