@@ -110,9 +110,9 @@ export default function PhotoGallery({
       </div>
 
       {/* Temporary test area */}
-      <div className="mt-8">
+      {/* <div className="mt-8">
         <PhotoUploader />
-      </div>
+      </div> */}
     </section>
   );
 }
