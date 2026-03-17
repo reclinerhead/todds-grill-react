@@ -94,19 +94,15 @@ export default async function ReviewsGrid() {
               </div>
 
               {/* Replies (nested) */}
-              {getReplies(review.id).map((reply, replyIndex) => (
+              {getReplies(review.id).map((reply) => (
                 <div
                   key={reply.id}
-                  className={`ml-${replyIndex === 0 ? "8" : "14"} pl-6 border-l-2 border-orange-300 mt-4`}
+                  className="ml-8 pl-6 border-l-2 border-orange-300 mt-4"
                 >
                   <div className="bg-orange-50 p-5 rounded-2xl">
                     <div className="flex items-center gap-3">
                       <div
-                        className={`w-${replyIndex === 0 ? "9" : "8"} h-${
-                          replyIndex === 0 ? "9" : "8"
-                        } ${reply.author_bg_color || "bg-gray-100"} rounded-full flex items-center justify-center text-${
-                          replyIndex === 0 ? "sm" : "xs"
-                        }`}
+                        className={`w-9 h-9 ${reply.author_bg_color || "bg-gray-100"} rounded-full flex items-center justify-center text-sm`}
                       >
                         {reply.author_avatar || "?"}
                       </div>
