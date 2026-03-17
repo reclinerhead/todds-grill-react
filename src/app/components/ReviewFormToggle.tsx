@@ -1,0 +1,27 @@
+"use client";
+
+import { useState } from "react";
+import ReviewForm from "./ReviewForm";
+
+export default function ReviewFormToggle() {
+  const [open, setOpen] = useState(false);
+
+  if (open) return <ReviewForm />;
+
+  return (
+    <section id="submitreview" className="py-16 bg-white">
+      <div className="container mx-auto px-4 flex flex-col items-center gap-4">
+        <p className="text-gray-500 text-sm uppercase tracking-widest font-semibold">
+          Enjoyed your visit?
+        </p>
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-500 active:scale-95 text-white font-bold text-lg px-8 py-4 rounded-xl shadow-lg transition-all duration-200 hover:scale-105"
+        >
+          <span>✍️</span> Leave Your Own Review
+        </button>
+      </div>
+    </section>
+  );
+}

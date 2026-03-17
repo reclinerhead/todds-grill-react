@@ -29,9 +29,12 @@ export default async function ReviewsGrid() {
         <h2 className="text-3xl font-bold text-center mb-3 text-orange-600">
           What Our Customers Say
         </h2>
-        <div className="text-center mb-12 text-gray-600">
-          <a href="#submitreview" className="underline hover:text-orange-600">
-            Leave your own review - as long as its a good one!
+        <div className="text-center mb-12">
+          <a
+            href="#submitreview"
+            className="inline-flex items-center gap-2 text-orange-600 font-semibold hover:text-orange-500 underline underline-offset-4 decoration-orange-400 transition-colors"
+          >
+            ✍️ Leave your own review — as long as it&apos;s a good one!
           </a>
         </div>
 

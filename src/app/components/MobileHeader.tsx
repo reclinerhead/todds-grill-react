@@ -111,6 +111,12 @@ export default function MobileHeader() {
               Reviews
             </a>
             <a
+              href="#photos"
+              className="block px-6 py-3 hover:text-orange-400 hover:bg-white/5 transition-colors"
+            >
+              Photo Gallery
+            </a>
+            <a
               href="#hours"
               className="block px-6 py-3 hover:text-orange-400 hover:bg-white/5 transition-colors"
             >
