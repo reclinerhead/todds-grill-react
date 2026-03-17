@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Trash2, MessageSquare } from "lucide-react";
+import { Trash2, MessageSquare, Sparkles } from "lucide-react";
 import {
   replyToReview,
   deleteReview,
   deleteComment,
 } from "@/app/actions/manager-reviews";
+import { analyzeReviewForReply } from "@/app/actions/reviewresponder";
 import { formatSmartDate, formatFullDate } from "@/lib/formatDate";
 
 export type ReviewRow = {
@@ -140,7 +141,34 @@ function ReviewCard({
   const hasResponse = Boolean(review.manager_response);
   const [replyOpen, setReplyOpen] = useState(!hasResponse);
   const [commentsOpen, setCommentsOpen] = useState(true);
+  const [replyText, setReplyText] = useState(review.manager_response ?? "");
   const [deleting, startDeleteTransition] = useTransition();
+  const [generating, startGenerateTransition] = useTransition();
+  const [activePassion, setActivePassion] = useState<number | null>(null);
+
+  const passionOptions = [
+    { label: "Brief", value: 1 },
+    { label: "Casual", value: 3 },
+    { label: "Friendly", value: 5 },
+    { label: "Fired Up", value: 7 },
+    { label: "Full Todd Energy!", value: 10 },
+  ];
+
+  function handleGenerate(passion: number) {
+    setActivePassion(passion);
+    startGenerateTransition(async () => {
+      const result = await analyzeReviewForReply(
+        review.review_text,
+        review.ai_sentiment ?? "neutral",
+        passion,
+      );
+      if (result?.reply) {
+        setReplyText(result.reply);
+        setReplyOpen(true);
+      }
+      setActivePassion(null);
+    });
+  }
 
   // Card background: responded → neutral, negative → red tint, positive → green tint
   let cardClass = "rounded-xl border p-5 bg-white border-gray-200";
@@ -285,18 +313,43 @@ function ReviewCard({
           </div>
         )}
 
+        {/* AI generate buttons — always visible when reply panel is accessible */}
+        {(!hasResponse || replyOpen) && (
+          <div className="mt-4 flex items-center gap-2 flex-wrap">
+            <span className="text-xs text-gray-400 flex items-center gap-1">
+              <Sparkles size={12} />
+              AI draft:
+            </span>
+            {passionOptions.map(({ label, value }) => (
+              <button
+                key={value}
+                type="button"
+                disabled={generating}
+                onClick={() => handleGenerate(value)}
+                className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-white border-gray-300 text-gray-600 hover:border-orange-400 hover:text-orange-600"
+              >
+                {generating && activePassion === value ? (
+                  <span className="inline-block w-3 h-3 border-2 border-orange-400 border-t-transparent rounded-full animate-spin" />
+                ) : null}
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Reply form */}
         {replyOpen && (
           <form
             action={replyToReview.bind(null, review.id)}
             onSubmit={() => setReplyOpen(false)}
-            className="mt-4"
+            className="mt-3"
           >
             <textarea
               name="response"
               required
               rows={3}
-              defaultValue={review.manager_response ?? ""}
+              value={replyText}
+              onChange={(e) => setReplyText(e.target.value)}
               placeholder="Write a reply as Todd (Owner) 🐟…"
               className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400 resize-y"
             />
