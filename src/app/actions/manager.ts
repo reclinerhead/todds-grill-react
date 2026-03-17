@@ -38,8 +38,117 @@ export async function toggleMenuItemFeatured(
   revalidatePath("/manager");
 }
 
+export async function updateMenuItemName(id: string, formData: FormData) {
+  const name = (formData.get("name") as string)?.trim();
+  if (!name) return;
+
+  const supabase = adminClient();
+  const { error } = await supabase
+    .from("menu_items")
+    .update({ name })
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/manager");
+}
+
+export async function updateMenuItemDescription(
+  id: string,
+  formData: FormData,
+) {
+  const description = (formData.get("description") as string)?.trim() ?? "";
+
+  const supabase = adminClient();
+  const { error } = await supabase
+    .from("menu_items")
+    .update({ description: description || null })
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/manager");
+}
+
+export async function updateMenuItemPrice(id: string, formData: FormData) {
+  const price = (formData.get("price") as string)?.trim();
+  if (!price) return;
+
+  const supabase = adminClient();
+  const { error } = await supabase
+    .from("menu_items")
+    .update({ price })
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/manager");
+}
+
 export async function signOut() {
   const supabase = await createSupabaseServerClient();
   await supabase.auth.signOut();
   redirect("/login");
+}
+
+// ── Menu image management ──────────────────────────────────────────────────
+
+export async function listMenuImages(): Promise<
+  { name: string; url: string }[]
+> {
+  const supabase = adminClient();
+  const { data, error } = await supabase.storage
+    .from("restaurant-files")
+    .list("menu", { sortBy: { column: "name", order: "asc" } });
+
+  if (error || !data) return [];
+
+  const imageFiles = data.filter(
+    (f) =>
+      f.name !== ".emptyFolderPlaceholder" &&
+      /\.(jpe?g|png|webp|gif)$/i.test(f.name),
+  );
+
+  return imageFiles.map((f) => {
+    const { data: urlData } = supabase.storage
+      .from("restaurant-files")
+      .getPublicUrl(`menu/${f.name}`);
+    return { name: f.name, url: urlData.publicUrl };
+  });
+}
+
+export async function uploadMenuImage(
+  formData: FormData,
+): Promise<{ url: string } | { error: string }> {
+  const file = formData.get("file") as File | null;
+  if (!file || file.size === 0) return { error: "No file provided." };
+  if (!file.type.startsWith("image/"))
+    return { error: "File must be an image." };
+  if (file.size > 5 * 1024 * 1024) return { error: "File exceeds 5 MB limit." };
+
+  // Sanitize filename to prevent path traversal
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+  const path = `menu/${Date.now()}-${safeName}`;
+
+  const supabase = adminClient();
+  const bytes = await file.arrayBuffer();
+  const { error } = await supabase.storage
+    .from("restaurant-files")
+    .upload(path, bytes, { contentType: file.type, upsert: false });
+
+  if (error) return { error: error.message };
+
+  const { data: urlData } = supabase.storage
+    .from("restaurant-files")
+    .getPublicUrl(path);
+
+  return { url: urlData.publicUrl };
+}
+
+export async function updateMenuItemImage(id: string, imageUrl: string | null) {
+  const supabase = adminClient();
+  const { error } = await supabase
+    .from("menu_items")
+    .update({ image_url: imageUrl })
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/manager");
 }

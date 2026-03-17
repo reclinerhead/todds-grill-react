@@ -12,6 +12,12 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 export default async function Home() {
   // call our supabase storage bucket to get the list of gallery images, then map to public URLs for the PhotoGallery component
   const supabase = await createSupabaseServerClient();
+
+  // Check if the current user is the manager
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const isManager = !!user && user.email === process.env.MANAGER_EMAIL;
   const { data: galleryFiles, error: galleryError } = await supabase.storage
     .from("restaurant-files")
     .list("gallery", { sortBy: { column: "created_at", order: "desc" } });
@@ -37,7 +43,7 @@ export default async function Home() {
     <>
       <div className="min-h-screen flex flex-col bg-background text-gray-200">
         {/* Header */}
-        <MobileHeader />
+        <MobileHeader isManager={isManager} />
 
         <main className="grow flex flex-col">
           {/* Hero Section */}

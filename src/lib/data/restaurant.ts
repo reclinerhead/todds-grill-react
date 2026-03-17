@@ -48,9 +48,10 @@ export async function getHeroMenuPhotos(
     .from("menu_items")
     .select("id, name, image_url")
     .eq("is_active", true)
+    .eq("is_featured", true) // only featured items to ensure good photos
     .not("image_url", "is", null)
-    .neq("image_url", "")
-    .limit(count * 3); // fetch extra pool to randomize from
+    .neq("image_url", "");
+  //.limit(9); // fetch extra pool to randomize from
 
   if (error || !data) return [];
   return data.sort(() => Math.random() - 0.5).slice(0, count);

@@ -1,5 +1,6 @@
 "use server";
 
+import { headers } from "next/headers";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function signInAnonymously() {
@@ -33,13 +34,16 @@ export async function sendMagicLink(
     return { error: "Please enter a valid email address.", sent: false };
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "";
+  const headersList = await headers();
+  const origin =
+    headersList.get("origin") ??
+    `${headersList.get("x-forwarded-proto") ?? "http"}://${headersList.get("host")}`;
   const supabase = await createSupabaseServerClient();
 
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${siteUrl}/auth/callback`,
+      emailRedirectTo: `${origin}/auth/callback`,
       ...(captchaToken ? { captchaToken } : {}),
     },
   });

@@ -3,7 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 
-export default function MobileHeader() {
+export default function MobileHeader({
+  isManager = false,
+}: {
+  isManager?: boolean;
+}) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
 
@@ -56,6 +60,14 @@ export default function MobileHeader() {
             >
               Talk to the Manager
             </button>
+            {isManager && (
+              <Link
+                href="/manager"
+                className="border border-white/20 text-gray-300 hover:border-orange-400 hover:text-orange-400 px-4 py-1.5 rounded-lg transition-all duration-200 text-sm font-medium"
+              >
+                Manage
+              </Link>
+            )}
           </nav>
           <button
             className="md:hidden text-gray-300 hover:text-white transition-colors p-1"
@@ -140,6 +152,17 @@ export default function MobileHeader() {
                 Talk to Manager
               </button>
             </div>
+            {isManager && (
+              <div className="px-6 py-3">
+                <Link
+                  href="/manager"
+                  className="block w-full text-center border border-white/20 text-gray-300 hover:border-orange-400 hover:text-orange-400 px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Manage
+                </Link>
+              </div>
+            )}
           </nav>
         )}
       </header>
