@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createClient } from "@supabase/supabase-js";
-import { signOut } from "@/app/actions/manager";
+import { signOut, listGalleryImages } from "@/app/actions/manager";
 import ManagerDashboard from "./ManagerDashboard";
 
 type ManagerMenuItem = {
@@ -40,6 +40,8 @@ export default async function ManagerPage() {
 
   const menuItems: ManagerMenuItem[] = items ?? [];
 
+  const galleryImages = await listGalleryImages();
+
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
       {/* Top bar */}
@@ -74,7 +76,7 @@ export default async function ManagerPage() {
         </div>
       </header>
 
-      <ManagerDashboard menuItems={menuItems} />
+      <ManagerDashboard menuItems={menuItems} galleryImages={galleryImages} />
 
       <footer className="border-t border-white/10 bg-gray-900 px-6 py-4 text-center">
         <a
