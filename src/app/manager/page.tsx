@@ -104,9 +104,9 @@ export default async function ManagerPage() {
                 <tr>
                   <th className="px-4 py-3 font-medium">Name</th>
                   <th className="px-4 py-3 font-medium">Price</th>
-                  <th className="px-4 py-3 font-medium text-center">Active</th>
+                  <th className="px-4 py-3 font-medium text-center">Active?</th>
                   <th className="px-4 py-3 font-medium text-center">
-                    Featured
+                    Featured?
                   </th>
                 </tr>
               </thead>
