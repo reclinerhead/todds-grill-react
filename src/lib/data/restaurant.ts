@@ -95,7 +95,9 @@ export async function getReviewsForGrid(): Promise<Review[] | null> {
   const supabase = await createSupabaseServerClient();
   const { data: reviewsData, error } = await supabase
     .from("reviews")
-    .select("*")
+    .select(
+      "id, parent_id, author_name, author_avatar, author_bg_color, rating, review_text, item_reviewed, created_at, manager_response",
+    )
     .order("created_at", { ascending: false });
 
   if (error) {

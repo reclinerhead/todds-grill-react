@@ -42,6 +42,20 @@ export default async function ManagerPage() {
 
   const galleryImages = await listGalleryImages();
 
+  // Fetch all reviews newest-first
+  const { data: reviewsData, error: reviewsError } = await admin
+    .from("reviews")
+    .select(
+      "id, parent_id, created_at, author_name, author_avatar, author_bg_color, rating, review_text, item_reviewed, author_email, manager_response, ai_sentiment, ai_sentiment_reasoning, attention_needed",
+    )
+    .order("created_at", { ascending: false });
+
+  if (reviewsError) {
+    console.error("Manager: failed to load reviews:", reviewsError);
+  }
+
+  const reviews = reviewsData ?? [];
+
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
       {/* Top bar */}
@@ -76,7 +90,11 @@ export default async function ManagerPage() {
         </div>
       </header>
 
-      <ManagerDashboard menuItems={menuItems} galleryImages={galleryImages} />
+      <ManagerDashboard
+        menuItems={menuItems}
+        galleryImages={galleryImages}
+        reviews={reviews}
+      />
 
       <footer className="border-t border-white/10 bg-gray-900 px-6 py-4 text-center">
         <a

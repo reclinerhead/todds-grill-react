@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import MenuImagePickerModal from "./MenuImagePickerModal";
 import GalleryManager from "./GalleryManager";
+import ReviewManager, { type ReviewRow } from "./ReviewManager";
 import {
   toggleMenuItemActive,
   toggleMenuItemFeatured,
@@ -28,9 +29,11 @@ type Tab = "menu" | "reviews" | "gallery";
 export default function ManagerDashboard({
   menuItems,
   galleryImages,
+  reviews,
 }: {
   menuItems: ManagerMenuItem[];
   galleryImages: GalleryImage[];
+  reviews: ReviewRow[];
 }) {
   const [activeTab, setActiveTab] = useState<Tab>("menu");
   const [editingPriceId, setEditingPriceId] = useState<string | null>(null);
@@ -407,14 +410,7 @@ export default function ManagerDashboard({
             );
           })()}
 
-        {activeTab === "reviews" && (
-          <div className="rounded-xl bg-gray-800 border border-white/10 p-10 text-center">
-            <p className="text-2xl font-bold text-white mb-2">Reviews</p>
-            <p className="text-gray-400 text-sm">
-              Review management coming soon.
-            </p>
-          </div>
-        )}
+        {activeTab === "reviews" && <ReviewManager reviews={reviews} />}
 
         {activeTab === "gallery" && (
           <GalleryManager initialImages={galleryImages} />

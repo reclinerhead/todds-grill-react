@@ -51,9 +51,16 @@ export default async function ReviewsGrid() {
                       {review.author_avatar || "?"}
                     </div>
                     <div>
-                      <p className="text-gray-600 font-semibold text-lg">
-                        {review.author_name}
-                      </p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="text-gray-600 font-semibold text-lg">
+                          {review.author_name}
+                        </p>
+                        {review.manager_response && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200">
+                            ✓ Responded
+                          </span>
+                        )}
+                      </div>
                       {review.rating && (
                         <div className="flex text-orange-500">
                           {review.rating}
@@ -73,6 +80,16 @@ export default async function ReviewsGrid() {
                   <p className="text-xs text-orange-600 mt-3 font-medium">
                     — {review.item_reviewed}
                   </p>
+                )}
+                {review.manager_response && (
+                  <div className="mt-4 pl-4 border-l-4 border-orange-300 bg-orange-50 rounded-r-lg py-2 pr-3">
+                    <p className="text-xs font-semibold text-orange-700 mb-1">
+                      Todd (Owner) 🐟
+                    </p>
+                    <p className="text-sm text-gray-700 leading-relaxed">
+                      {review.manager_response}
+                    </p>
+                  </div>
                 )}
               </div>
 

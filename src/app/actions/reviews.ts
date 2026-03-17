@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { analyzeReview } from "@/app/actions/reviewflagging";
 
 const reviewSchema = z
   .object({
@@ -242,6 +243,23 @@ export async function submitReview(
     const reviewerEmail = reviewerEmailRaw || null;
     const stars = "★".repeat(rating);
 
+    // Analyze sentiment — fire and don't block on failure
+    let aiSentiment: string | null = null;
+    let aiReasoning: string | null = null;
+    let attentionNeeded = true;
+    try {
+      const analysis = await analyzeReview(reviewText);
+      if (analysis) {
+        aiSentiment = analysis.sentiment;
+        aiReasoning = analysis.reason;
+        attentionNeeded =
+          analysis.sentiment === "negative" ||
+          analysis.sentiment === "positive";
+      }
+    } catch (aiError) {
+      console.error("Sentiment analysis failed (non-fatal):", aiError);
+    }
+
     const { error } = await supabase.from("reviews").insert({
       parent_id: null,
       user_id: activeUser.id,
@@ -252,6 +270,9 @@ export async function submitReview(
       rating: stars,
       review_text: reviewText,
       item_reviewed: productNames.join(", "),
+      ai_sentiment: aiSentiment,
+      ai_sentiment_reasoning: aiReasoning,
+      attention_needed: attentionNeeded,
     });
 
     if (error) {
