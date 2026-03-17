@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  const response = NextResponse.next({ request });
+  let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -11,15 +11,21 @@ export async function middleware(request: NextRequest) {
       cookies: {
         getAll: () => request.cookies.getAll(),
         setAll: (cookiesToSet) => {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            response.cookies.set(name, value, options);
-          });
+          // Write to request.cookies first so getUser() sees the refreshed token,
+          // then reassign supabaseResponse so updated cookies reach the browser.
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value),
+          );
+          supabaseResponse = NextResponse.next({ request });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options),
+          );
         },
       },
     },
   );
 
-  // Refresh session on every request
+  // Must use getUser() — never getSession() — in middleware
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -39,7 +45,8 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  return response;
+  // Must return supabaseResponse so refreshed session cookies are forwarded to the browser.
+  return supabaseResponse;
 }
 
 export const config = {
