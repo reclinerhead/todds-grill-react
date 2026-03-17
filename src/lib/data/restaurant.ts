@@ -38,6 +38,23 @@ export async function getFeaturedMenuItem() {
   return data[0] || null; // return the item or null if none
 }
 
+// Returns a random selection of active menu items that have images, for the hero collage
+export async function getHeroMenuPhotos(
+  count: number = 3,
+): Promise<MenuItem[]> {
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("menu_items")
+    .select("id, name, image_url")
+    .eq("is_active", true)
+    .not("image_url", "is", null)
+    .neq("image_url", "")
+    .limit(count * 3); // fetch extra pool to randomize from
+
+  if (error || !data) return [];
+  return data.sort(() => Math.random() - 0.5).slice(0, count);
+}
+
 // Returns the count of currently active menu items
 export async function getActiveMenuCount(): Promise<number> {
   const supabase = await createSupabaseServerClient();

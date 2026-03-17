@@ -13,73 +13,127 @@ export default function MobileHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-50  text-white py-4 bg-surface-dark">
-        <div className="container mx-auto px-4 flex justify-between items-center">
+      <header className="sticky top-0 z-50 text-white bg-gray-950/80 backdrop-blur-md border-b border-white/10">
+        <div className="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
           <Link
             href="/"
-            className="text-2xl md:text-3xl font-bold tracking-tight hover:text-orange-200 transition-colors"
+            className="text-xl md:text-2xl font-extrabold tracking-tight text-white hover:text-orange-400 transition-colors"
           >
-            Todd&apos;s Grill & Bait
+            Todd&apos;s <span className="text-orange-500">Grill & Bait</span>
           </Link>
-          <nav className="hidden md:flex space-x-4">
-            <a href="#menu" className="hover:text-orange-200">
+          <nav className="hidden md:flex items-center space-x-6 text-sm font-medium text-gray-300">
+            <a href="#menu" className="hover:text-orange-400 transition-colors">
               Menu
             </a>
-            <a href="#reviews" className="hover:text-orange-200">
+            <a
+              href="#reviews"
+              className="hover:text-orange-400 transition-colors"
+            >
               Reviews
             </a>
-            <a href="#photos" className="hover:text-orange-200">
+            <a
+              href="#photos"
+              className="hover:text-orange-400 transition-colors"
+            >
               Photo Gallery
             </a>
-            <a href="#hours" className="hover:text-orange-200">
+            <a
+              href="#hours"
+              className="hover:text-orange-400 transition-colors"
+            >
               Hours & Location
             </a>
-            <a href="#contact" className="hover:text-orange-200">
+            <a
+              href="#contact"
+              className="hover:text-orange-400 transition-colors"
+            >
               Contact
             </a>
             <button
               type="button"
-              className="hover:text-orange-200"
+              className="border border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-white px-4 py-1.5 rounded-lg transition-all duration-200"
               onClick={openManagerChatPopup}
             >
               Talk to Manager
             </button>
           </nav>
           <button
-            className="md:hidden text-2xl"
+            className="md:hidden text-gray-300 hover:text-white transition-colors p-1"
+            aria-label="Toggle menu"
             onClick={() => setMenuOpen(!menuOpen)}
           >
-            ☰
+            {menuOpen ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            )}
           </button>
         </div>
 
         {menuOpen && (
-          <nav
-            className="md:hidden bg-orange-700 py-2"
-            style={{ backgroundColor: "rgba(255, 165, 0, 0.8)" }}
-          >
-            <a href="#menu" className="block px-4 py-2 hover:bg-orange-800">
+          <nav className="md:hidden bg-gray-900 border-t border-white/10 py-2 text-sm font-medium text-gray-300">
+            <a
+              href="#menu"
+              className="block px-6 py-3 hover:text-orange-400 hover:bg-white/5 transition-colors"
+            >
               Menu
             </a>
-            <a href="#reviews" className="block px-4 py-2 hover:bg-orange-800">
+            <a
+              href="#reviews"
+              className="block px-6 py-3 hover:text-orange-400 hover:bg-white/5 transition-colors"
+            >
               Reviews
             </a>
-            <a href="#hours" className="block px-4 py-2 hover:bg-orange-800">
+            <a
+              href="#hours"
+              className="block px-6 py-3 hover:text-orange-400 hover:bg-white/5 transition-colors"
+            >
               Hours & Location
             </a>
-            <a href="#contact" className="block px-4 py-2 hover:bg-orange-800">
+            <a
+              href="#contact"
+              className="block px-6 py-3 hover:text-orange-400 hover:bg-white/5 transition-colors"
+            >
               Contact
             </a>
-            <button
-              type="button"
-              className="block w-full px-4 py-2 text-left hover:bg-orange-800"
-              onClick={() => {
-                setMenuOpen(false);
-                openManagerChatPopup();
-              }}
-            >
-              Talk to Manager
-            </button>
+            <div className="px-6 py-3">
+              <button
+                type="button"
+                className="w-full border border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-white px-4 py-2 rounded-lg transition-all duration-200"
+                onClick={() => {
+                  setMenuOpen(false);
+                  openManagerChatPopup();
+                }}
+              >
+                Talk to Manager
+              </button>
+            </div>
           </nav>
         )}
       </header>
