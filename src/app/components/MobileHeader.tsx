@@ -54,7 +54,7 @@ export default function MobileHeader() {
               className="border border-orange-500 text-orange-400 hover:bg-orange-500 hover:text-white px-4 py-1.5 rounded-lg transition-all duration-200"
               onClick={openManagerChatPopup}
             >
-              Talk to Manager
+              Talk to the Manager
             </button>
           </nav>
           <button
