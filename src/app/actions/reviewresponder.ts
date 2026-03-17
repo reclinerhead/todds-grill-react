@@ -1,8 +1,7 @@
 "use server";
 
-import { generateText, Output } from "ai";
+import { generateText } from "ai";
 import { xai } from "@ai-sdk/xai";
-import { z } from "zod";
 import {
   TODD_PERSONA,
   KAREN_PERSONA,
@@ -73,6 +72,9 @@ export async function analyzeReviewForReply(
   const clampedPassion = Math.min(10, Math.max(1, Math.round(passion)));
   const temperature = 0.3 + (clampedPassion / 10) * 0.7; // 0.37 (terse) → 1.0 (full Todd energy)
 
+  // Only include restaurant history at higher passion levels where storytelling is relevant
+  const historySection = clampedPassion > 6 ? `\n\n${RESTAURANT_HISTORY}` : "";
+
   const system = `
 You are the manager on duty at Todd's Grill and Bait, responding publicly to a customer review on behalf of the restaurant.
 Write in the voice of either Todd Wyatt (owner) or Karen Wyatt (manager) — whichever feels like the better fit for this review and tone.
@@ -81,7 +83,7 @@ ${TODD_PERSONA}
 
 ${KAREN_PERSONA}
 
-${RESTAURANT_HISTORY}
+${historySection}
 
 RULES:
 - Always sign the reply with the persona's first name (Todd or Karen).
@@ -104,21 +106,12 @@ Now write your response to this customer review:
 ${comment}
 """`.trim();
 
-  const { output } = await generateText({
+  const { text } = await generateText({
     model: xai("grok-3-mini-fast"),
     temperature,
-    output: Output.object({
-      schema: z.object({
-        reply: z
-          .string()
-          .describe(
-            "The generated reply to the customer's review. Plain prose, signed with the persona's first name.",
-          ),
-      }),
-    }),
     system,
     prompt,
   });
 
-  return output;
+  return { reply: text.trim() };
 }

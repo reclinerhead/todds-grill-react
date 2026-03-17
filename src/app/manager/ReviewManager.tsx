@@ -170,14 +170,14 @@ function ReviewCard({
     });
   }
 
-  // Card background: responded → neutral, negative → red tint, positive → green tint
+  // Card background: always reflect sentiment regardless of responded state
   let cardClass = "rounded-xl border p-5 bg-white border-gray-200";
-  if (hasResponse) {
-    cardClass = "rounded-xl border p-5 bg-gray-50 border-gray-200";
-  } else if (review.ai_sentiment === "negative") {
+  if (review.ai_sentiment === "negative") {
     cardClass = "rounded-xl border p-5 bg-red-50 border-red-200";
   } else if (review.ai_sentiment === "positive") {
     cardClass = "rounded-xl border p-5 bg-green-50 border-green-200";
+  } else if (hasResponse) {
+    cardClass = "rounded-xl border p-5 bg-gray-50 border-gray-200";
   }
 
   function handleDelete() {
@@ -295,23 +295,32 @@ function ReviewCard({
         </p>
 
         {/* Existing manager response display */}
-        {hasResponse && !replyOpen && (
-          <div className="mt-4 pl-4 border-l-4 border-orange-300 bg-orange-50 rounded-r-lg py-2 pr-3">
-            <p className="text-xs font-semibold text-orange-700 mb-1">
-              Todd (Owner) 🐟
-            </p>
-            <p className="text-sm text-gray-700 leading-relaxed">
-              {review.manager_response}
-            </p>
-            <button
-              type="button"
-              onClick={() => setReplyOpen(true)}
-              className="mt-2 text-xs text-orange-600 hover:text-orange-800 underline underline-offset-2"
-            >
-              Edit reply
-            </button>
-          </div>
-        )}
+        {hasResponse &&
+          !replyOpen &&
+          (() => {
+            const isPositive = review.ai_sentiment === "positive";
+            return (
+              <div
+                className={`mt-4 pl-4 border-l-4 rounded-r-lg py-2 pr-3 ${isPositive ? "border-green-400 bg-green-100" : "border-orange-300 bg-orange-50"}`}
+              >
+                <p
+                  className={`text-xs font-semibold mb-1 ${isPositive ? "text-green-800" : "text-orange-700"}`}
+                >
+                  Todd (Owner) 🐟
+                </p>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                  {review.manager_response}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setReplyOpen(true)}
+                  className={`mt-2 text-xs underline underline-offset-2 ${isPositive ? "text-green-700 hover:text-green-900" : "text-orange-600 hover:text-orange-800"}`}
+                >
+                  Edit reply
+                </button>
+              </div>
+            );
+          })()}
 
         {/* AI generate buttons — always visible when reply panel is accessible */}
         {(!hasResponse || replyOpen) && (
