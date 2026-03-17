@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ["192.168.1.79"],
   images: {
     remotePatterns: [
       {
@@ -23,6 +24,11 @@ const nextConfig: NextConfig = {
         hostname:
           "afd-production-eru2ractomp34-gjdjeybzcubvfrgz.z01.azurefd.net",
         pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "vksgvnzkyurpntazsklu.supabase.co",
+        pathname: "/storage/v1/object/public/**",
       },
     ],
   },

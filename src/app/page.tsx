@@ -9,9 +9,24 @@ import ReviewForm from "./components/ReviewForm";
 import { getHeroMenuPhotos } from "@/lib/data/restaurant";
 import StatsBar from "./components/StatsBar";
 import PhotoGallery from "./components/PhotoGallery";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export default async function Home() {
   const heroPhotos = await getHeroMenuPhotos(3);
+
+  const supabase = await createSupabaseServerClient();
+  const { data: galleryFiles } = await supabase.storage
+    .from("restaurant-files")
+    .list("gallery", { sortBy: { column: "created_at", order: "desc" } });
+
+  const galleryImages = (galleryFiles ?? [])
+    .filter((f) => f.name !== ".emptyFolderPlaceholder")
+    .map((f) => {
+      const { data } = supabase.storage
+        .from("restaurant-files")
+        .getPublicUrl(`gallery/${f.name}`);
+      return data.publicUrl;
+    });
 
   return (
     <>
@@ -113,7 +128,7 @@ export default async function Home() {
           <ReviewForm />
 
           {/* Photo Gallery Section */}
-          <PhotoGallery />
+          <PhotoGallery images={galleryImages} />
 
           {/* Hours & Location Section */}
           <section id="hours" className="py-16 bg-orange-100">

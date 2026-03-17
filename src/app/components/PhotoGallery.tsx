@@ -6,6 +6,7 @@ import Image from "next/image";
 
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
+import PhotoUploader from "./PhotoUploader";
 
 // Optional: define a prop type if you want to pass images from parent later
 type PhotoGalleryProps = {
@@ -115,6 +116,11 @@ export default function PhotoGallery({
           belly and a fish story worth telling. Just the way Pappy Zeke
           would&apos;ve chuckled over.
         </p>
+      </div>
+
+      {/* Temporary test area */}
+      <div className="mt-8">
+        <PhotoUploader />
       </div>
     </section>
   );

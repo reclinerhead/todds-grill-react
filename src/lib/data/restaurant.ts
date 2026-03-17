@@ -21,6 +21,7 @@ export async function getMenuItemsForGrid(): Promise<MenuItem[] | null> {
   return menuItemsData ?? [];
 }
 
+// https://todds-grill.toddtech.llc/
 // calls supabase to get the most recent featured menu item, returns null if none or on error
 export async function getFeaturedMenuItem() {
   const supabase = await createSupabaseServerClient();
