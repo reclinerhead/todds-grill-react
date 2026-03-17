@@ -19,7 +19,6 @@ export default function PhotoGallery({
     "/gallery/47e86086-4cdf-4dcf-b81f-7b2a038098b8.jpg",
     "/gallery/e69fd608-9f68-4ea6-bcd3-03709b96b11f.jpg",
     "/gallery/c5f2ef8e-d6be-4654-84d6-8c699e78768d.jpg",
-    "/gallery/grok-image-fb43fa7b-a49e-42de-bad9-dfa559e3e611.png",
     "/gallery/f69599c6-e679-4a41-ba35-c15ded76e67d.jpg",
     "/gallery/eddb89b7-7e91-4365-bdbd-250662e07fb3.jpg",
     "/gallery/grok-image-d2895105-ae52-4a64-9e41-3ac3fda73bac.png",
