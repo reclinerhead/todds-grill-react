@@ -14,6 +14,15 @@ import {
 // sentiment = positive | negative | neutral, determined by the review classifier when written to database
 // passion = 1-10, how emotional/enthusiastic the reply should be. 1 = very calm and neutral, 10 = very passionate and emotional.
 
+// this is the scaling we use to link our requested passion level to the temperature parameter for generation. We want to ensure that even at low passion levels, we have some variability in the output to avoid robotic or repetitive replies. //
+
+/* Button	Passion	Temperature
+Brief	1	0.37
+Casual	3	0.51
+Friendly	5	0.65
+Fired Up	7	0.79
+Full Todd Energy	10	1.00  */
+
 function buildPassionGuidance(passion: number): string {
   if (passion <= 2) {
     return `TONE: One sentence only. Flat, minimal, professional. No warmth, no personality, no sign-off flourishes. Acknowledge and done.`;
@@ -62,6 +71,7 @@ export async function analyzeReviewForReply(
   passion: number,
 ) {
   const clampedPassion = Math.min(10, Math.max(1, Math.round(passion)));
+  const temperature = 0.3 + (clampedPassion / 10) * 0.7; // 0.37 (terse) → 1.0 (full Todd energy)
 
   const system = `
 You are the manager on duty at Todd's Grill and Bait, responding publicly to a customer review on behalf of the restaurant.
@@ -95,7 +105,8 @@ ${comment}
 """`.trim();
 
   const { output } = await generateText({
-    model: xai("grok-3-mini"),
+    model: xai("grok-3-mini-fast"),
+    temperature,
     output: Output.object({
       schema: z.object({
         reply: z
