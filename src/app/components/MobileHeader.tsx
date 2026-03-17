@@ -23,7 +23,7 @@ export default function MobileHeader({
             href="/"
             className="text-xl md:text-2xl font-extrabold tracking-tight text-white hover:text-orange-400 transition-colors"
           >
-            Todd&apos;s <span className="text-orange-500">Grill & Bait</span>
+            Todd&apos;s Grill <span className="text-orange-500">& Bait</span>
           </Link>
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium text-gray-300">
             <a href="#menu" className="hover:text-orange-400 transition-colors">
