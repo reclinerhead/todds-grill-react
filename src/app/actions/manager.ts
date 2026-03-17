@@ -85,7 +85,7 @@ export async function updateMenuItemPrice(id: string, formData: FormData) {
 export async function signOut() {
   const supabase = await createSupabaseServerClient();
   await supabase.auth.signOut();
-  redirect("/login");
+  redirect("/");
 }
 
 // ── Menu image management ──────────────────────────────────────────────────

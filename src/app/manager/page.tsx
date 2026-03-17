@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createClient } from "@supabase/supabase-js";
 import { signOut } from "@/app/actions/manager";
@@ -56,12 +57,12 @@ export default async function ManagerPage() {
           </span>
         </div>
         <div className="flex items-center gap-3">
-          <a
+          <Link
             href="/"
             className="rounded-lg border border-white/20 px-4 py-1.5 text-sm text-gray-300 hover:border-orange-400 hover:text-orange-400 transition-colors"
           >
             ↗ Public Site
-          </a>
+          </Link>
           <form action={signOut}>
             <button
               type="submit"
