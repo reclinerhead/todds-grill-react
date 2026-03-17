@@ -1,10 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReviewForm from "./ReviewForm";
 
 export default function ReviewFormToggle() {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const check = () => {
+      if (window.location.hash === "#submitreview") {
+        setOpen(true);
+      }
+    };
+    check(); // open immediately if page loaded with the hash
+    window.addEventListener("hashchange", check);
+    return () => window.removeEventListener("hashchange", check);
+  }, []);
 
   if (open) return <ReviewForm />;
 
