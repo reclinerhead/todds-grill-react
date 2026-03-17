@@ -350,6 +350,13 @@ export default function ReviewManager({ reviews }: { reviews: ReviewRow[] }) {
   const topLevel = reviews.filter((r) => !r.parent_id);
   const allComments = reviews.filter((r) => Boolean(r.parent_id));
 
+  const ratedReviews = topLevel.filter((r) => r.rating);
+  const avgRating =
+    ratedReviews.length > 0
+      ? ratedReviews.reduce((sum, r) => sum + (r.rating?.length ?? 0), 0) /
+        ratedReviews.length
+      : null;
+
   const getComments = (parentId: number) =>
     allComments.filter((c) => c.parent_id === parentId.toString());
 
@@ -373,12 +380,18 @@ export default function ReviewManager({ reviews }: { reviews: ReviewRow[] }) {
   return (
     <div>
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-5 gap-4 mb-6">
         <div className="rounded-xl bg-gray-800 border border-white/10 p-5 text-center">
           <p className="text-3xl font-extrabold text-white">
             {topLevel.length}
           </p>
           <p className="text-sm text-gray-400 mt-1">Reviews</p>
+        </div>
+        <div className="rounded-xl bg-gray-800 border border-white/10 p-5 text-center">
+          <p className="text-3xl font-extrabold text-yellow-400">
+            {avgRating !== null ? avgRating.toFixed(1) : "—"}
+          </p>
+          <p className="text-sm text-gray-400 mt-1">Avg rating</p>
         </div>
         <div className="rounded-xl bg-gray-800 border border-white/10 p-5 text-center">
           <p className="text-3xl font-extrabold text-purple-400">

@@ -21,7 +21,9 @@ type FormErrors = {
 const MAX_REVIEW_LENGTH = 1000;
 const HCAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY;
 
-export default function ReviewForm() {
+export default function ReviewForm({
+  onSuccess,
+}: { onSuccess?: () => void } = {}) {
   const captchaRef = useRef<InstanceType<typeof HCaptcha> | null>(null);
   const [menuOptions, setMenuOptions] = useState<ReviewFormMenuOption[]>([]);
   const [isLoadingMenuItems, setIsLoadingMenuItems] = useState(true);
@@ -33,6 +35,7 @@ export default function ReviewForm() {
   const [captchaToken, setCaptchaToken] = useState("");
   const [hoveredRating, setHoveredRating] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [blocked, setBlocked] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
 
   useEffect(() => {
@@ -170,6 +173,11 @@ export default function ReviewForm() {
       });
 
       if (!result.ok) {
+        if (result.blocked) {
+          setBlocked(true);
+          return;
+        }
+
         if (result.resetCaptcha) {
           setCaptchaToken("");
           captchaRef.current?.resetCaptcha();
@@ -180,6 +188,7 @@ export default function ReviewForm() {
 
       toast.success("Thanks! Your review has been submitted.");
       clearForm();
+      onSuccess?.();
     } catch (error) {
       const message =
         error instanceof Error
@@ -463,9 +472,34 @@ export default function ReviewForm() {
               )}
             </div>
 
+            {blocked && (
+              <div className="rounded-xl border border-red-200 bg-red-50 dark:bg-red-950/40 dark:border-red-800 p-4 flex gap-3 items-start">
+                <span className="text-2xl shrink-0" aria-hidden="true">
+                  ⚠️
+                </span>
+                <div>
+                  <p className="font-semibold text-red-700 dark:text-red-400">
+                    We were unable to post your review.
+                  </p>
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-300">
+                    Our system flagged your submission as it may not meet our
+                    community guidelines. If you have a question or concern,
+                    please give us a call at{" "}
+                    <a
+                      href="tel:+11234567890"
+                      className="font-semibold underline hover:text-red-800 dark:hover:text-red-200"
+                    >
+                      (123) 456-7890
+                    </a>{" "}
+                    and we&apos;ll be happy to help.
+                  </p>
+                </div>
+              </div>
+            )}
+
             <button
               type="submit"
-              disabled={isSubmitting || !HCAPTCHA_SITE_KEY}
+              disabled={isSubmitting || blocked || !HCAPTCHA_SITE_KEY}
               className="inline-flex items-center justify-center rounded-lg bg-orange-600 px-5 py-2.5 font-semibold text-white shadow-md transition hover:bg-orange-700 disabled:cursor-not-allowed disabled:bg-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
               {isSubmitting ? "Submitting..." : "Submit review"}

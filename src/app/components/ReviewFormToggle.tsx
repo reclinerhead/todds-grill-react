@@ -17,7 +17,7 @@ export default function ReviewFormToggle() {
     return () => window.removeEventListener("hashchange", check);
   }, []);
 
-  if (open) return <ReviewForm />;
+  if (open) return <ReviewForm onSuccess={() => setOpen(false)} />;
 
   return (
     <section id="submitreview" className="py-16 bg-white">

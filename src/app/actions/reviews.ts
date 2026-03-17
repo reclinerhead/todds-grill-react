@@ -46,6 +46,7 @@ type SubmitReviewResult = {
   ok: boolean;
   error?: string;
   resetCaptcha?: boolean;
+  blocked?: boolean;
 };
 
 const getInitialForAvatar = (name: string) => {
@@ -250,6 +251,14 @@ export async function submitReview(
     try {
       const analysis = await analyzeReview(reviewText);
       if (analysis) {
+        if (analysis.isAbusive) {
+          return {
+            ok: false,
+            blocked: true,
+            error:
+              "Your review could not be posted because it appears to violate our community guidelines.  Please contact the restaurant directly if you have feedback you'd like to share with them.",
+          };
+        }
         aiSentiment = analysis.sentiment;
         aiReasoning = analysis.reason;
         attentionNeeded =

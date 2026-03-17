@@ -44,7 +44,38 @@ export default async function HeroSection() {
             </div>
           </div>
 
-          {/* Right: Photo collage */}
+          {/* Right: Photo collage — adapts to 1, 2, or 3 photos */}
+          {heroPhotos.length === 1 && (
+            <div className="h-105 rounded-2xl overflow-hidden shadow-2xl">
+              <Image
+                src={heroPhotos[0].image_url}
+                alt={heroPhotos[0].name ?? "Menu item"}
+                width={800}
+                height={600}
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+              />
+            </div>
+          )}
+
+          {heroPhotos.length === 2 && (
+            <div className="flex gap-3 h-105">
+              {heroPhotos.slice(0, 2).map((photo) => (
+                <div
+                  key={photo.id}
+                  className="flex-1 rounded-2xl overflow-hidden shadow-2xl"
+                >
+                  <Image
+                    src={photo.image_url}
+                    alt={photo.name ?? "Menu item"}
+                    width={400}
+                    height={600}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
           {heroPhotos.length >= 3 && (
             <div className="flex gap-3 h-105">
               {/* Tall left image */}
