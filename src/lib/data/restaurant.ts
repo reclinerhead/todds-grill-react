@@ -41,7 +41,7 @@ export async function getFeaturedMenuItem() {
 // Returns a random selection of active menu items that have images, for the hero collage
 export async function getHeroMenuPhotos(
   count: number = 3,
-): Promise<MenuItem[]> {
+): Promise<Pick<MenuItem, "id" | "name" | "image_url">[]> {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("menu_items")
