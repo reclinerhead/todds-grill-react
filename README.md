@@ -68,17 +68,16 @@ Protected via Next.js middleware + role-based access control (`profiles` table, 
 <div align="center">
 
   <img src="/screenshots/screen1.png" alt="Public Main Page" width="800" />
-  <p><em>Public site main page with hero section that shows the currently featured menu items. It picks three at random if more than are set — and will collapse elegantly if there are only 2, 1, or none.</em></p>
+  <p><em>Public site main page with hero section that shows the currently featured menu items.  If more than three are currently featured, it will pick at random — and will collapse elegantly if there less than three.</em></p>
 
   <br/>
 
   <img src="/screenshots/screen2.png" alt="Public Gallery" width="800" />
-  <p><em>Public photo gallery pulling from the Supabase storage bucket.</em></p>
-
+  <p><em>Public photo gallery pulling from the Supabase storage bucket.  A future idea here would be to allow customers to upload their own photos - but use image analysis to pre-screen obviously bad stuff in order to streamline things for an admin user - and keep embarassing stuff off the site automatically.</em></p>
   <br/>
 
   <img src="/screenshots/screen3.png" alt="Customer Service Agent Chat" width="800" />
-  <p><em>Example of chatting with a multi-personality agent. Lots of care went into designing the prompt to be safe, prevent abusive posts, not go off rails, and to be hardened against prompt injection and hijacking. Either persona can respond (sometimes both) depending on the content of the message.</em></p>
+  <p><em>Example of a customer chatting with a multi-personality agent. Lots of care went into designing the prompt to be safe, prevent abusive posts, not go off rails, and to be hardened against prompt injection and hijacking. The model determines for itself which persona will respond (sometimes both), depending on the content of the message.</em></p>
 
   <br/>
 
