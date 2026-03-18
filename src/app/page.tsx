@@ -96,7 +96,7 @@ export default async function Home() {
                 </div>
                 <div>
                   <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1000!2d-85.5722795!3d42.2652027!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0:0x0!2s604+Norton+Drive,+Kalamazoo,+MI+49001!5e0!3m2!1sen!2sus!4v1640999999999!5m2!1sen!2sus"
+                    src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d1267203.5992153015!2d-84.52240640860875!3d42.46399355077823!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1773866133632!5m2!1sen!2sus"
                     width="100%"
                     height="300"
                     style={{ border: 0 }}
