@@ -44,20 +44,30 @@ Protected via Next.js middleware + role-based access control (`profiles` table, 
 - **Gallery Manager** — Upload and delete gallery photos via Supabase Storage
 - **Review Manager** — The centerpiece feature:
 
-  | AI Capability                     | Description                                                                                        |
-  | --------------------------------- | -------------------------------------------------------------------------------------------------- |
-  | 🧠 **Sentiment Analysis**         | Every review is automatically scored and labeled (positive / neutral / negative)                   |
-  | 🚨 **Abuse / Toxicity Detection** | Flags reviews containing inappropriate content for moderation                                      |
-  | ✍️ **Auto-Reply Generation**      | Generate a manager reply in multiple tones: Friendly, Professional, Humorous, Empathetic, and more |
-  | 💬 **Reply Editor**               | Edit AI drafts, post replies, and manage response threads                                          |
+  | AI Capability                     | Description                                                                                                                                                                                        |
+  | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | 🧠 **Sentiment Analysis**         | Every review is automatically scored and labeled (positive / neutral / negative)                                                                                                                   |
+  | 🚨 **Abuse / Toxicity Detection** | Flags reviews containing inappropriate content for moderation                                                                                                                                      |
+  | ⚙️ **Actionable Item Extraction** | A second parallel AI call identifies concrete, practical things the owner should act on (e.g. "Check AC coverage in back dining area", "Investigate appetizer ticket times during off-peak hours") |
+  | ✍️ **Auto-Reply Generation**      | Generate a manager reply in multiple tones: Friendly, Professional, Humorous, Empathetic, and more                                                                                                 |
+  | 💬 **Reply Editor**               | Edit AI drafts, post replies, and manage response threads                                                                                                                                          |
 
-## Screenshots
+  Both the sentiment analysis and actionable item extraction run as **parallel AI calls** (`Promise.all`) at review submission time, so there's no extra latency. Results are persisted to Supabase (`ai_sentiment`, `ai_sentiment_reasoning`, `actionable_analysis`) and displayed on each review card in the manager dashboard:
+  - A **Sentiment Analysis panel** appears below the review text, color-coded green (positive) or red (negative), showing the AI's one-sentence reasoning.
+  - An **Actionable Items panel** (amber) lists each specific follow-up item the AI identified, so the owner can triage issues at a glance without re-reading every review.
+
+<div align="center">
+  <img src="/screenshots/screen4.png" alt="Management Dashboard Overview" width="800" style="margin-bottom: 1rem;" />
+</div>
+
+> **Planned:** A future "Top 10 Actionable Items" report will aggregate these per-review signals across the last 30 days, giving the owner a prioritized ops summary automatically.
+
+## More Screenshots
 
 <div align="center">
   <img src="/screenshots/screen1.png" alt="Public Main Page" width="800" style="margin-bottom: 1rem;" />
   <img src="/screenshots/screen2.png" alt="Public Gallery" width="800" style="margin-bottom: 1rem;" />
   <img src="/screenshots/screen3.png" alt="Customer Service Agent Chat" width="800" style="margin-bottom: 1rem;" />
-  <img src="/screenshots/screen4.png" alt="Management Dashboard Overview" width="800" style="margin-bottom: 1rem;" />
   <img src="/screenshots/screen5.png" alt="Review Manager with AI Reply" width="800" />
 </div>
 
@@ -193,5 +203,6 @@ This project was built to learn and practice:
 - Add user manager to add other managers/owners via the web UI
 - Add reservation system
 - Real-time review notifications with Supabase Realtime
+- **Actionable Items report** — aggregate the `actionable_analysis` column across the last 30 days to surface a ranked "Top 10 Things to Fix" list for the owner
 - Mobile app shell with Expo + same Supabase backend
 - End-to-end tests with Playwright
