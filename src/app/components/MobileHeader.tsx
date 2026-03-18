@@ -17,6 +17,13 @@ export default function MobileHeader({
     setChatOpen(true);
   };
 
+  const scrollToSection =
+    (id: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
+      e.preventDefault();
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+      setMenuOpen(false);
+    };
+
   return (
     <>
       <header className="sticky top-0 z-50 text-white bg-gray-950/80 backdrop-blur-md border-b border-white/10">
@@ -24,33 +31,47 @@ export default function MobileHeader({
           <Link
             href="/"
             className="text-xl md:text-2xl font-extrabold tracking-tight text-white hover:text-orange-400 transition-colors"
+            onClick={(e) => {
+              if (window.location.pathname === "/") {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
           >
             Todd&apos;s Grill <span className="text-orange-500">& Bait</span>
           </Link>
           <nav className="hidden md:flex items-center space-x-6 text-sm font-medium text-gray-300">
-            <a href="#menu" className="hover:text-orange-400 transition-colors">
+            <a
+              href="#menu"
+              onClick={scrollToSection("menu")}
+              className="hover:text-orange-400 transition-colors"
+            >
               Menu
             </a>
             <a
               href="#reviews"
+              onClick={scrollToSection("reviews")}
               className="hover:text-orange-400 transition-colors"
             >
               Reviews
             </a>
             <a
               href="#photos"
+              onClick={scrollToSection("photos")}
               className="hover:text-orange-400 transition-colors"
             >
               Photo Gallery
             </a>
             <a
               href="#hours"
+              onClick={scrollToSection("hours")}
               className="hover:text-orange-400 transition-colors"
             >
               Hours & Location
             </a>
             <a
               href="#contact"
+              onClick={scrollToSection("contact")}
               className="hover:text-orange-400 transition-colors"
             >
               Contact
@@ -114,30 +135,35 @@ export default function MobileHeader({
           <nav className="md:hidden bg-gray-900 border-t border-white/10 py-2 text-sm font-medium text-gray-300">
             <a
               href="#menu"
+              onClick={scrollToSection("menu")}
               className="block px-6 py-3 hover:text-orange-400 hover:bg-white/5 transition-colors"
             >
               Menu
             </a>
             <a
               href="#reviews"
+              onClick={scrollToSection("reviews")}
               className="block px-6 py-3 hover:text-orange-400 hover:bg-white/5 transition-colors"
             >
               Reviews
             </a>
             <a
               href="#photos"
+              onClick={scrollToSection("photos")}
               className="block px-6 py-3 hover:text-orange-400 hover:bg-white/5 transition-colors"
             >
               Photo Gallery
             </a>
             <a
               href="#hours"
+              onClick={scrollToSection("hours")}
               className="block px-6 py-3 hover:text-orange-400 hover:bg-white/5 transition-colors"
             >
               Hours & Location
             </a>
             <a
               href="#contact"
+              onClick={scrollToSection("contact")}
               className="block px-6 py-3 hover:text-orange-400 hover:bg-white/5 transition-colors"
             >
               Contact

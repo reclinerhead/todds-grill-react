@@ -244,14 +244,15 @@ export async function submitReview(
     const reviewerEmail = reviewerEmailRaw || null;
     const stars = "★".repeat(rating);
 
-    // Analyze sentiment — fire and don't block on failure
+    // Analyze sentiment & actionable items in parallel — fire and don't block on failure
     let aiSentiment: string | null = null;
     let aiReasoning: string | null = null;
+    let aiActionable: string | null = null;
     let attentionNeeded = true;
     try {
-      const analysis = await analyzeReview(reviewText);
-      if (analysis) {
-        if (analysis.isAbusive) {
+      const { sentiment, actionable } = await analyzeReview(reviewText);
+      if (sentiment) {
+        if (sentiment.isAbusive) {
           return {
             ok: false,
             blocked: true,
@@ -259,14 +260,17 @@ export async function submitReview(
               "Your review could not be posted because it appears to violate our community guidelines.  Please contact the restaurant directly if you have feedback you'd like to share with them.",
           };
         }
-        aiSentiment = analysis.sentiment;
-        aiReasoning = analysis.reason;
+        aiSentiment = sentiment.sentiment;
+        aiReasoning = sentiment.reason;
         attentionNeeded =
-          analysis.sentiment === "negative" ||
-          analysis.sentiment === "positive";
+          sentiment.sentiment === "negative" ||
+          sentiment.sentiment === "positive";
+      }
+      if (actionable) {
+        aiActionable = JSON.stringify(actionable);
       }
     } catch (aiError) {
-      console.error("Sentiment analysis failed (non-fatal):", aiError);
+      console.error("AI analysis failed (non-fatal):", aiError);
     }
 
     const { error } = await supabase.from("reviews").insert({
@@ -282,6 +286,7 @@ export async function submitReview(
       ai_sentiment: aiSentiment,
       ai_sentiment_reasoning: aiReasoning,
       attention_needed: attentionNeeded,
+      actionable_analysis: aiActionable,
     });
 
     if (error) {

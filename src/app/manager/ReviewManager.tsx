@@ -25,6 +25,7 @@ export type ReviewRow = {
   ai_sentiment: string | null;
   ai_sentiment_reasoning: string | null;
   attention_needed: boolean;
+  actionable_analysis: string | null;
 };
 
 function SentimentBadge({ sentiment }: { sentiment: string | null }) {
@@ -50,6 +51,96 @@ function SentimentBadge({ sentiment }: { sentiment: string | null }) {
     >
       {badge.label}
     </span>
+  );
+}
+
+type ActionableData = {
+  actionableItems?: string[];
+};
+
+function SentimentAnalysis({
+  sentiment,
+  reasoning,
+}: {
+  sentiment: string | null;
+  reasoning: string | null;
+}) {
+  if (!reasoning) return null;
+
+  const isPositive = sentiment === "positive";
+  const isNegative = sentiment === "negative";
+
+  const colors = isPositive
+    ? {
+        border: "border-green-400",
+        bg: "bg-green-50",
+        icon: "text-green-600",
+        heading: "text-green-700",
+        body: "text-green-900",
+      }
+    : isNegative
+      ? {
+          border: "border-red-400",
+          bg: "bg-red-50",
+          icon: "text-red-500",
+          heading: "text-red-700",
+          body: "text-red-900",
+        }
+      : {
+          border: "border-gray-200",
+          bg: "bg-gray-50",
+          icon: "text-gray-400",
+          heading: "text-gray-600",
+          body: "text-gray-700",
+        };
+
+  const icon = isPositive ? "😊" : isNegative ? "😟" : "😐";
+
+  return (
+    <div
+      className={`mt-3 rounded-lg border ${colors.border} ${colors.bg} px-3 py-2.5`}
+    >
+      <div className="flex items-center gap-1.5 mb-1">
+        <span aria-hidden>{icon}</span>
+        <span
+          className={`text-xs font-semibold ${colors.heading} uppercase tracking-wide`}
+        >
+          Sentiment Analysis
+        </span>
+      </div>
+      <p className={`text-xs ${colors.body} leading-relaxed`}>{reasoning}</p>
+    </div>
+  );
+}
+
+function ActionableItems({ raw }: { raw: string | null }) {
+  if (!raw) return null;
+  let data: ActionableData;
+  try {
+    data = JSON.parse(raw) as ActionableData;
+  } catch {
+    return null;
+  }
+  if (!data.actionableItems?.length) return null;
+  return (
+    <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5">
+      <div className="flex items-center gap-1.5 mb-1.5">
+        <span className="text-amber-600" aria-hidden>
+          ⚙
+        </span>
+        <span className="text-xs font-semibold text-amber-700 uppercase tracking-wide">
+          Actionable Items
+        </span>
+      </div>
+      <ul className="space-y-1">
+        {data.actionableItems.map((item, i) => (
+          <li key={i} className="flex items-start gap-2 text-xs text-amber-900">
+            <span className="mt-0.5 shrink-0 text-amber-500">▸</span>
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
@@ -243,11 +334,6 @@ function ReviewCard({
                   </span>
                 )}
                 <SentimentBadge sentiment={review.ai_sentiment} />
-                {review.ai_sentiment_reasoning && (
-                  <span className="text-xs text-gray-500 italic">
-                    {review.ai_sentiment_reasoning}
-                  </span>
-                )}
                 {comments.length > 0 && (
                   <button
                     type="button"
@@ -305,6 +391,15 @@ function ReviewCard({
         <p className="mt-3 text-sm text-gray-700 leading-relaxed">
           {review.review_text}
         </p>
+
+        {/* Sentiment analysis panel */}
+        <SentimentAnalysis
+          sentiment={review.ai_sentiment}
+          reasoning={review.ai_sentiment_reasoning}
+        />
+
+        {/* Actionable items */}
+        <ActionableItems raw={review.actionable_analysis} />
 
         {/* Existing manager response display */}
         {hasResponse &&

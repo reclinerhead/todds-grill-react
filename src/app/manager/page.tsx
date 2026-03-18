@@ -63,7 +63,7 @@ export default async function ManagerPage() {
   const { data: reviewsData, error: reviewsError } = await supabase
     .from("reviews")
     .select(
-      "id, parent_id, created_at, author_name, author_avatar, author_bg_color, rating, review_text, item_reviewed, author_email, manager_response, ai_sentiment, ai_sentiment_reasoning, attention_needed",
+      "id, parent_id, created_at, author_name, author_avatar, author_bg_color, rating, review_text, item_reviewed, author_email, manager_response, ai_sentiment, ai_sentiment_reasoning, attention_needed, actionable_analysis",
     )
     .order("created_at", { ascending: false });
 
