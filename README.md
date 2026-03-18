@@ -53,11 +53,13 @@ Protected via Next.js middleware + role-based access control (`profiles` table, 
 
 ## Screenshots
 
-<image-card alt="Public Main Page" src="/screenshots/screen1.png" ></image-card>
-<image-card alt="Public Gallery" src="/screenshots/screen2.png" ></image-card>
-<image-card alt="Customer Service Agent Chat" src="/screenshots/screen3.png" ></image-card>
-<image-card alt="Management Dashboard Overview" src="/screenshots/screen4.png" ></image-card>
-<image-card alt="Review Manager with AI Reply" src="/screenshots/screen5.png" ></image-card>
+<div align="center">
+  <img src="/screenshots/screen1.png" alt="Public Main Page" width="800" style="margin-bottom: 1rem;" />
+  <img src="/screenshots/screen2.png" alt="Public Gallery" width="800" style="margin-bottom: 1rem;" />
+  <img src="/screenshots/screen3.png" alt="Customer Service Agent Chat" width="800" style="margin-bottom: 1rem;" />
+  <img src="/screenshots/screen4.png" alt="Management Dashboard Overview" width="800" style="margin-bottom: 1rem;" />
+  <img src="/screenshots/screen5.png" alt="Review Manager with AI Reply" width="800" />
+</div>
 
 ### Security
 
@@ -65,7 +67,7 @@ Protected via Next.js middleware + role-based access control (`profiles` table, 
 - Storage bucket policies: public read, admin-only write
 - `profiles` table used for role checks — no hardcoded email authorization
 - Rate limiting on the AI chat endpoint via Upstash Redis
-- hCaptcha on the review submission form
+- hCaptcha on the review submission form.
 
 ---
 
