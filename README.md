@@ -51,6 +51,14 @@ Protected via Next.js middleware + role-based access control (`profiles` table, 
   | ✍️ **Auto-Reply Generation**      | Generate a manager reply in multiple tones: Friendly, Professional, Humorous, Empathetic, and more |
   | 💬 **Reply Editor**               | Edit AI drafts, post replies, and manage response threads                                          |
 
+## Screenshots
+
+<image-card alt="Public Main Page" src="screenshots/screen1.png" ></image-card>
+<image-card alt="Public Gallery" src="screenshots/screen2.png" ></image-card>
+<image-card alt="Customer Service Agent Chat" src="screenshots/screen3.png" ></image-card>
+<image-card alt="Management Dashboard Overview" src="screenshots/screen4.png" ></image-card>
+<image-card alt="Review Manager with AI Reply" src="screenshots/screen5.png" ></image-card>
+
 ### Security
 
 - Row Level Security on all Supabase tables
@@ -180,7 +188,8 @@ This project was built to learn and practice:
 
 **Ideas for future exploration:**
 
-- Add reservation / booking system
+- Add user manager to add other managers/owners via the web UI
+- Add reservation system
 - Real-time review notifications with Supabase Realtime
 - Mobile app shell with Expo + same Supabase backend
 - End-to-end tests with Playwright
