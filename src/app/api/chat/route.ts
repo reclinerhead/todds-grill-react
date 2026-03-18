@@ -11,6 +11,7 @@ import { BASE_SYSTEM_PROMPT } from "@/lib/prompts/customerchat";
 
 const allowedOrigins = [
   "https://todds-grill.toddtech.llc", // production URL
+  "https://todds-grill-demo.toddtech.llc", // demo URL
   "http://localhost:3000", // for dev
 ];
 
