@@ -34,7 +34,11 @@ export async function middleware(request: NextRequest) {
 
   // Demo mode: allow anonymous access to /manager — no auth required.
   // Triggered by hostname (e.g. portfolio/recruiter demo deployment) or env var.
-  const host = request.headers.get("host");
+  // On Vercel, the public domain is in x-forwarded-host; host contains the internal hostname.
+  const host =
+    request.headers.get("x-forwarded-host") ??
+    request.headers.get("host") ??
+    "";
   const isDemo =
     host === "todds-grill-demo.toddtech.llc" ||
     process.env.IS_DEMONSTRATION_MODE === "true";

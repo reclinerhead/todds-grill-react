@@ -16,8 +16,10 @@ export default async function Home() {
 
   // Demo mode: allow anonymous access to /manager — no auth required.
   // Triggered by hostname (e.g. portfolio/recruiter demo deployment) or env var.
+  // On Vercel, the public domain is in x-forwarded-host; host contains the internal hostname.
   const headersList = await headers();
-  const host = headersList.get("host");
+  const host =
+    headersList.get("x-forwarded-host") ?? headersList.get("host") ?? "";
   const isDemo =
     host === "todds-grill-demo.toddtech.llc" ||
     process.env.IS_DEMONSTRATION_MODE === "true";

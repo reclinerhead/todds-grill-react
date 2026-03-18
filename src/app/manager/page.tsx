@@ -22,7 +22,8 @@ type ManagerMenuItem = {
 export default async function ManagerPage() {
   // Check for demonstration mode -- either the site host is todds-grill-demo.toddtech.llc or the env var is set.
   const headersList = await headers();
-  const host = headersList.get("host");
+  const host =
+    headersList.get("x-forwarded-host") ?? headersList.get("host") ?? "";
   const isDemo =
     host === "todds-grill-demo.toddtech.llc" ||
     process.env.IS_DEMONSTRATION_MODE === "true";
