@@ -57,7 +57,8 @@ Protected via Next.js middleware + role-based access control (`profiles` table, 
   - An **Actionable Items panel** (amber) lists each specific follow-up item the AI identified, so the owner can triage issues at a glance without re-reading every review.
 
 <div align="center">
-  <img src="/screenshots/screen4.png" alt="Management Dashboard Overview" width="800" style="margin-bottom: 1rem;" />
+<img src="/screenshots/screen5.png" alt="Review Manager with AI Reply" width="800" />
+  
 </div>
 
 > **Planned:** A future "Top 10 Actionable Items" report will aggregate these per-review signals across the last 30 days, giving the owner a prioritized ops summary automatically.
@@ -66,9 +67,11 @@ Protected via Next.js middleware + role-based access control (`profiles` table, 
 
 <div align="center">
   <img src="/screenshots/screen1.png" alt="Public Main Page" width="800" style="margin-bottom: 1rem;" />
+    Public site main page with hero section that shows the currently featured menu items.  It picks three at random if more than are set -- and will collapse elegantly if there are only 2, 1, or none.
+    
   <img src="/screenshots/screen2.png" alt="Public Gallery" width="800" style="margin-bottom: 1rem;" />
   <img src="/screenshots/screen3.png" alt="Customer Service Agent Chat" width="800" style="margin-bottom: 1rem;" />
-  <img src="/screenshots/screen5.png" alt="Review Manager with AI Reply" width="800" />
+  <img src="/screenshots/screen4.png" alt="Management Dashboard Overview" width="800" style="margin-bottom: 1rem;" />
 </div>
 
 ### Security
