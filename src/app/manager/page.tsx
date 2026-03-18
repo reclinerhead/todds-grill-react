@@ -106,9 +106,8 @@ export default async function ManagerPage() {
         </div>
       </header>
       {isDemo && (
-        <div className="mb-6 rounded-lg bg-gray-500 p-4 text-center text-sm font-medium text-white-800 border border-black">
-          DEMO MODE: Everything is read-only for demonstration purposes. Also -
-          all this restaurant data is fake, if it wasn&apos;t obvious.
+        <div className="bg-yellow-100 border-t border-yellow-300 px-4 py-2 text-center text-xs font-medium text-yellow-800">
+          DEMO MODE — This dashboard is read-only for demonstration purposes.
         </div>
       )}
 

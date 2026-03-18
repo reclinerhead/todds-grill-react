@@ -5,8 +5,10 @@ import Link from "next/link";
 
 export default function MobileHeader({
   isManager = false,
+  isDemo = false,
 }: {
   isManager?: boolean;
+  isDemo?: boolean;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
@@ -152,7 +154,8 @@ export default function MobileHeader({
                 Talk to Manager
               </button>
             </div>
-            {isManager && (
+
+            {(isManager || isDemo) && (
               <div className="px-6 py-3">
                 <Link
                   href="/manager"

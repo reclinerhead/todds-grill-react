@@ -8,10 +8,19 @@ import ReviewFormToggle from "./components/ReviewFormToggle";
 import PhotoGallery from "./components/PhotoGallery";
 import HeroSection from "./components/HeroSection";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { headers } from "next/headers";
 
 export default async function Home() {
   // call our supabase storage bucket to get the list of gallery images, then map to public URLs for the PhotoGallery component
   const supabase = await createSupabaseServerClient();
+
+  // Demo mode: allow anonymous access to /manager — no auth required.
+  // Triggered by hostname (e.g. portfolio/recruiter demo deployment) or env var.
+  const headersList = await headers();
+  const host = headersList.get("host");
+  const isDemo =
+    host === "todds-grill-demo.toddtech.llc" ||
+    process.env.IS_DEMONSTRATION_MODE === "true";
 
   // Check if the current user is the manager
   const {
@@ -43,7 +52,7 @@ export default async function Home() {
     <>
       <div className="min-h-screen flex flex-col bg-background text-gray-200">
         {/* Header */}
-        <MobileHeader isManager={isManager} />
+        <MobileHeader isManager={isManager} isDemo={isDemo} />
 
         <main className="grow flex flex-col">
           {/* Hero Section */}
