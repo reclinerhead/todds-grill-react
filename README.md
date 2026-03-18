@@ -66,20 +66,24 @@ Protected via Next.js middleware + role-based access control (`profiles` table, 
 ## More Screenshots
 
 <div align="center">
-  <img src="/screenshots/screen1.png" alt="Public Main Page" width="800" style="margin-bottom: 1rem;" />
-   <div align="center" style="margin-bottom: 2rem">
-    Public site main page with hero section that shows the currently featured menu items.  It picks three at random if more than are set -- and will collapse elegantly if there are only 2, 1, or none. 
-  </div>
 
-  <img src="/screenshots/screen2.png" alt="Public Gallery" width="800" style="margin-bottom: 1rem;" />
-    Public photo gallery pulling from the supabase storage bucket.<br><br>
+  <img src="/screenshots/screen1.png" alt="Public Main Page" width="800" />
+  <p><em>Public site main page with hero section that shows the currently featured menu items. It picks three at random if more than are set — and will collapse elegantly if there are only 2, 1, or none.</em></p>
 
-  <img src="/screenshots/screen3.png" alt="Customer Service Agent Chat" width="800" style="margin-bottom: 1rem;" />
-    Example of chatting with a multi-personality agent. Lots of care went into designing the prompt to be safe, prevent abusive posts, not go off rails, and to be hardened against prompt injection and hijacking.  Either persona can respond (sometimes both) depending on the content of the message.<br><br>
+  <br/>
 
-  <img src="/screenshots/screen4.png" alt="Management Dashboard Overview" width="800" style="margin-bottom: 1rem;" />
-    The management dashboard for the website.  Authorized users may edit their menu items, attach and upload new menu images, manage review, and manage their customer photo galleries easily and quickly.
-    <br><br>
+  <img src="/screenshots/screen2.png" alt="Public Gallery" width="800" />
+  <p><em>Public photo gallery pulling from the Supabase storage bucket.</em></p>
+
+  <br/>
+
+  <img src="/screenshots/screen3.png" alt="Customer Service Agent Chat" width="800" />
+  <p><em>Example of chatting with a multi-personality agent. Lots of care went into designing the prompt to be safe, prevent abusive posts, not go off rails, and to be hardened against prompt injection and hijacking. Either persona can respond (sometimes both) depending on the content of the message.</em></p>
+
+  <br/>
+
+  <img src="/screenshots/screen4.png" alt="Management Dashboard Overview" width="800" />
+  <p><em>The management dashboard for the website. Authorized users may edit their menu items, attach and upload new menu images, manage reviews, and manage their customer photo galleries easily and quickly.</em></p>
 
 </div>
 
