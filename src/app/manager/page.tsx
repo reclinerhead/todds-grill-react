@@ -2,7 +2,11 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createClient } from "@supabase/supabase-js";
-import { signOut, listGalleryImages } from "@/app/actions/manager";
+import {
+  signOut,
+  listGalleryImages,
+  listMenuImages,
+} from "@/app/actions/manager";
 import ManagerDashboard from "./ManagerDashboard";
 
 type ManagerMenuItem = {
@@ -40,7 +44,10 @@ export default async function ManagerPage() {
 
   const menuItems: ManagerMenuItem[] = items ?? [];
 
-  const galleryImages = await listGalleryImages();
+  const [galleryImages, menuImages] = await Promise.all([
+    listGalleryImages(),
+    listMenuImages(),
+  ]);
 
   // Fetch all reviews newest-first
   const { data: reviewsData, error: reviewsError } = await admin
@@ -93,6 +100,7 @@ export default async function ManagerPage() {
       <ManagerDashboard
         menuItems={menuItems}
         galleryImages={galleryImages}
+        menuImages={menuImages}
         reviews={reviews}
       />
 

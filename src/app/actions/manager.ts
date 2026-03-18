@@ -153,6 +153,26 @@ export async function updateMenuItemImage(id: string, imageUrl: string | null) {
   revalidatePath("/manager");
 }
 
+export async function deleteMenuImage(
+  name: string,
+): Promise<{ success: true } | { error: string }> {
+  // Validate name to prevent path traversal
+  if (!name || name.includes("/") || name.includes("..")) {
+    return { error: "Invalid file name." };
+  }
+
+  const path = `menu/${name}`;
+  const supabase = adminClient();
+  const { error } = await supabase.storage
+    .from("restaurant-files")
+    .remove([path]);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/manager");
+  return { success: true };
+}
+
 // ── Gallery image management ───────────────────────────────────────────────
 
 export async function listGalleryImages(): Promise<
