@@ -1,21 +1,13 @@
 "use server";
 
-import { createClient } from "@supabase/supabase-js";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
-
-function adminClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } },
-  );
-}
 
 export async function replyToReview(id: number, formData: FormData) {
   const response = (formData.get("response") as string)?.trim();
   if (!response) return;
 
-  const supabase = adminClient();
+  const supabase = await createSupabaseServerClient();
   const { error } = await supabase
     .from("reviews")
     .update({ manager_response: response, attention_needed: false })
@@ -26,7 +18,7 @@ export async function replyToReview(id: number, formData: FormData) {
 }
 
 export async function deleteReview(id: number) {
-  const supabase = adminClient();
+  const supabase = await createSupabaseServerClient();
 
   // Delete child comments first (parent_id is stored as text)
   const { error: childError } = await supabase
@@ -42,7 +34,7 @@ export async function deleteReview(id: number) {
 }
 
 export async function deleteComment(id: number) {
-  const supabase = adminClient();
+  const supabase = await createSupabaseServerClient();
   const { error } = await supabase.from("reviews").delete().eq("id", id);
   if (error) throw new Error(error.message);
   revalidatePath("/manager");

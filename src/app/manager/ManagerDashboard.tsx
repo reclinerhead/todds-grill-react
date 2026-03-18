@@ -33,11 +33,13 @@ export default function ManagerDashboard({
   galleryImages,
   menuImages,
   reviews,
+  isDemo = false,
 }: {
   menuItems: ManagerMenuItem[];
   galleryImages: GalleryImage[];
   menuImages: GalleryImage[];
   reviews: ReviewRow[];
+  isDemo?: boolean;
 }) {
   const [activeTab, setActiveTab] = useState<Tab>("menu");
   const [menuSubTab, setMenuSubTab] = useState<MenuSubTab>("items");
@@ -225,7 +227,8 @@ export default function ManagerDashboard({
                                   <button
                                     type="submit"
                                     title="Save"
-                                    className="flex-shrink-0 flex items-center justify-center h-7 w-7 rounded-md bg-green-600 hover:bg-green-500 text-white transition-colors"
+                                    disabled={isDemo}
+                                    className="flex-shrink-0 flex items-center justify-center h-7 w-7 rounded-md bg-green-600 hover:bg-green-500 disabled:opacity-50 disabled:cursor-not-allowed text-white transition-colors"
                                   >
                                     ✓
                                   </button>
@@ -280,7 +283,8 @@ export default function ManagerDashboard({
                                     <button
                                       type="submit"
                                       title="Save"
-                                      className="flex items-center gap-1 px-2 py-1 rounded-md bg-green-600 hover:bg-green-500 text-white text-xs font-medium transition-colors"
+                                      disabled={isDemo}
+                                      className="flex items-center gap-1 px-2 py-1 rounded-md bg-green-600 hover:bg-green-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-medium transition-colors"
                                     >
                                       ✓ Save
                                     </button>
@@ -337,7 +341,8 @@ export default function ManagerDashboard({
                                   <button
                                     type="submit"
                                     title="Save"
-                                    className="flex-shrink-0 flex items-center justify-center h-7 w-7 rounded-md bg-green-600 hover:bg-green-500 text-white transition-colors"
+                                    disabled={isDemo}
+                                    className="flex-shrink-0 flex items-center justify-center h-7 w-7 rounded-md bg-green-600 hover:bg-green-500 disabled:opacity-50 disabled:cursor-not-allowed text-white transition-colors"
                                   >
                                     ✓
                                   </button>
@@ -376,7 +381,8 @@ export default function ManagerDashboard({
                                   title={
                                     item.is_active ? "Deactivate" : "Activate"
                                   }
-                                  className={`inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 ${
+                                  disabled={isDemo}
+                                  className={`inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:opacity-60 disabled:cursor-not-allowed ${
                                     item.is_active
                                       ? "bg-green-500"
                                       : "bg-gray-600"
@@ -405,7 +411,8 @@ export default function ManagerDashboard({
                                   title={
                                     item.is_featured ? "Unfeature" : "Feature"
                                   }
-                                  className={`inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 ${
+                                  disabled={isDemo}
+                                  className={`inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:opacity-60 disabled:cursor-not-allowed ${
                                     item.is_featured
                                       ? "bg-orange-500"
                                       : "bg-gray-600"
@@ -431,7 +438,7 @@ export default function ManagerDashboard({
             )}
 
             {menuSubTab === "images" && (
-              <MenuImageManager initialImages={menuImages} />
+              <MenuImageManager initialImages={menuImages} isDemo={isDemo} />
             )}
           </>
         )}
@@ -452,6 +459,7 @@ export default function ManagerDashboard({
                 onSaved={(newUrl) =>
                   handleImageSaved(imagePickerItemId, newUrl)
                 }
+                isDemo={isDemo}
               />
             );
           })()}

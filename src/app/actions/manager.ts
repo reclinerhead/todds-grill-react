@@ -1,21 +1,12 @@
 "use server";
 
 import { randomUUID } from "crypto";
-import { createClient } from "@supabase/supabase-js";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
-function adminClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } },
-  );
-}
-
 export async function toggleMenuItemActive(id: string, currentValue: boolean) {
-  const supabase = adminClient();
+  const supabase = await createSupabaseServerClient();
   const { error } = await supabase
     .from("menu_items")
     .update({ is_active: !currentValue })
@@ -29,7 +20,7 @@ export async function toggleMenuItemFeatured(
   id: string,
   currentValue: boolean,
 ) {
-  const supabase = adminClient();
+  const supabase = await createSupabaseServerClient();
   const { error } = await supabase
     .from("menu_items")
     .update({ is_featured: !currentValue })
@@ -43,7 +34,7 @@ export async function updateMenuItemName(id: string, formData: FormData) {
   const name = (formData.get("name") as string)?.trim();
   if (!name) return;
 
-  const supabase = adminClient();
+  const supabase = await createSupabaseServerClient();
   const { error } = await supabase
     .from("menu_items")
     .update({ name })
@@ -59,7 +50,7 @@ export async function updateMenuItemDescription(
 ) {
   const description = (formData.get("description") as string)?.trim() ?? "";
 
-  const supabase = adminClient();
+  const supabase = await createSupabaseServerClient();
   const { error } = await supabase
     .from("menu_items")
     .update({ description: description || null })
@@ -73,7 +64,7 @@ export async function updateMenuItemPrice(id: string, formData: FormData) {
   const price = (formData.get("price") as string)?.trim();
   if (!price) return;
 
-  const supabase = adminClient();
+  const supabase = await createSupabaseServerClient();
   const { error } = await supabase
     .from("menu_items")
     .update({ price })
@@ -94,7 +85,7 @@ export async function signOut() {
 export async function listMenuImages(): Promise<
   { name: string; url: string }[]
 > {
-  const supabase = adminClient();
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.storage
     .from("restaurant-files")
     .list("menu", { sortBy: { column: "name", order: "asc" } });
@@ -127,7 +118,7 @@ export async function uploadMenuImage(
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
   const path = `menu/${randomUUID()}.${ext}`;
 
-  const supabase = adminClient();
+  const supabase = await createSupabaseServerClient();
   const bytes = await file.arrayBuffer();
   const { error } = await supabase.storage
     .from("restaurant-files")
@@ -143,7 +134,7 @@ export async function uploadMenuImage(
 }
 
 export async function updateMenuItemImage(id: string, imageUrl: string | null) {
-  const supabase = adminClient();
+  const supabase = await createSupabaseServerClient();
   const { error } = await supabase
     .from("menu_items")
     .update({ image_url: imageUrl })
@@ -162,7 +153,7 @@ export async function deleteMenuImage(
   }
 
   const path = `menu/${name}`;
-  const supabase = adminClient();
+  const supabase = await createSupabaseServerClient();
   const { error } = await supabase.storage
     .from("restaurant-files")
     .remove([path]);
@@ -178,7 +169,7 @@ export async function deleteMenuImage(
 export async function listGalleryImages(): Promise<
   { name: string; url: string }[]
 > {
-  const supabase = adminClient();
+  const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.storage
     .from("restaurant-files")
     .list("gallery", { sortBy: { column: "created_at", order: "desc" } });
@@ -212,7 +203,7 @@ export async function uploadGalleryImage(
   const fileName = `${randomUUID()}.${ext}`;
   const path = `gallery/${fileName}`;
 
-  const supabase = adminClient();
+  const supabase = await createSupabaseServerClient();
   const bytes = await file.arrayBuffer();
   const { error } = await supabase.storage
     .from("restaurant-files")
@@ -237,7 +228,7 @@ export async function deleteGalleryImage(
   }
 
   const path = `gallery/${name}`;
-  const supabase = adminClient();
+  const supabase = await createSupabaseServerClient();
   const { error } = await supabase.storage
     .from("restaurant-files")
     .remove([path]);

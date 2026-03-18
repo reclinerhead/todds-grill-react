@@ -1,13 +1,13 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { createClient } from "@supabase/supabase-js";
 import {
   signOut,
   listGalleryImages,
   listMenuImages,
 } from "@/app/actions/manager";
 import ManagerDashboard from "./ManagerDashboard";
+import { headers } from "next/headers";
 
 type ManagerMenuItem = {
   id: string;
@@ -20,20 +20,29 @@ type ManagerMenuItem = {
 };
 
 export default async function ManagerPage() {
-  // Secondary auth guard (middleware is primary)
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  // Check for demonstration mode -- either the site host is todds-grill-demo.toddtech.llc or the env var is set.
+  const headersList = await headers();
+  const host = headersList.get("host");
+  const isDemo =
+    host === "todds-grill-demo.toddtech.llc" ||
+    process.env.IS_DEMONSTRATION_MODE === "true";
 
-  // Fetch all menu items via admin client to bypass RLS
-  const admin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } },
-  );
-  const { data: items, error } = await admin
+  // One server client for both auth and data fetching.
+  // Uses the user's session cookies — RLS validates admin access for writes.
+  // In demo mode (no session), falls back to the anon key which can still
+  // read publicly-accessible tables (menu_items, reviews).
+  const supabase = await createSupabaseServerClient();
+
+  // Secondary auth guard (middleware is primary)
+  if (!isDemo) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) redirect("/login");
+  }
+
+  // Fetch all menu items
+  const { data: items, error } = await supabase
     .from("menu_items")
     .select("id, name, description, price, is_active, is_featured, image_url")
     .order("name", { ascending: true });
@@ -50,7 +59,7 @@ export default async function ManagerPage() {
   ]);
 
   // Fetch all reviews newest-first
-  const { data: reviewsData, error: reviewsError } = await admin
+  const { data: reviewsData, error: reviewsError } = await supabase
     .from("reviews")
     .select(
       "id, parent_id, created_at, author_name, author_avatar, author_bg_color, rating, review_text, item_reviewed, author_email, manager_response, ai_sentiment, ai_sentiment_reasoning, attention_needed",
@@ -96,12 +105,19 @@ export default async function ManagerPage() {
           </form>
         </div>
       </header>
+      {isDemo && (
+        <div className="mb-6 rounded-lg bg-gray-500 p-4 text-center text-sm font-medium text-white-800 border border-black">
+          DEMO MODE: Everything is read-only for demonstration purposes. Also -
+          all this restaurant data is fake, if it wasn&apos;t obvious.
+        </div>
+      )}
 
       <ManagerDashboard
         menuItems={menuItems}
         galleryImages={galleryImages}
         menuImages={menuImages}
         reviews={reviews}
+        isDemo={isDemo}
       />
 
       <footer className="border-t border-white/10 bg-gray-900 px-6 py-4 text-center">

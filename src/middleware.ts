@@ -32,16 +32,32 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  if (pathname.startsWith("/manager")) {
-    if (!user) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
+  // Demo mode: allow anonymous access to /manager — no auth required.
+  // Triggered by hostname (e.g. portfolio/recruiter demo deployment) or env var.
+  const host = request.headers.get("host");
+  const isDemo =
+    host === "todds-grill-demo.toddtech.llc" ||
+    process.env.IS_DEMONSTRATION_MODE === "true";
 
-    const allowedEmail = process.env.MANAGER_EMAIL;
-    if (allowedEmail && user.email !== allowedEmail) {
-      return NextResponse.redirect(
-        new URL("/login?error=unauthorized", request.url),
-      );
+  if (pathname.startsWith("/manager")) {
+    if (!isDemo) {
+      if (!user) {
+        return NextResponse.redirect(new URL("/login", request.url));
+      }
+
+      // Look up the user's role in the profiles table.
+      // RLS must allow users to read their own row (e.g. "auth.uid() = id").
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (profile?.role !== "admin") {
+        return NextResponse.redirect(
+          new URL("/login?error=unauthorized", request.url),
+        );
+      }
     }
   }
 

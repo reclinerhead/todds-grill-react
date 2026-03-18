@@ -15,6 +15,7 @@ type Props = {
   currentImageUrl: string | null;
   onClose: () => void;
   onSaved: (newUrl: string | null) => void;
+  isDemo?: boolean;
 };
 
 export default function MenuImagePickerModal({
@@ -23,6 +24,7 @@ export default function MenuImagePickerModal({
   currentImageUrl,
   onClose,
   onSaved,
+  isDemo = false,
 }: Props) {
   const [images, setImages] = useState<BucketImage[]>([]);
   const [loadingImages, setLoadingImages] = useState(true);
@@ -177,7 +179,7 @@ export default function MenuImagePickerModal({
                 })}
               </div>
             )}
-            {selectedUrl && (
+            {selectedUrl && !isDemo && (
               <button
                 onClick={() => setSelectedUrl(null)}
                 className="mt-3 text-xs text-gray-600 hover:text-red-400 transition-colors"
@@ -187,105 +189,107 @@ export default function MenuImagePickerModal({
             )}
           </section>
 
-          {/* Upload new image */}
-          <section>
-            <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-3">
-              Upload New Image
-            </h3>
-            <div
-              onDragOver={(e) => {
-                e.preventDefault();
-                setIsDragging(true);
-              }}
-              onDragLeave={() => setIsDragging(false)}
-              onDrop={(e) => {
-                e.preventDefault();
-                setIsDragging(false);
-                const file = e.dataTransfer.files[0];
-                if (file) handleFileSelect(file);
-              }}
-              onClick={() => !uploadFile && fileInputRef.current?.click()}
-              className={`border-2 border-dashed rounded-xl p-5 transition-colors ${
-                uploadFile
-                  ? "border-white/20 cursor-default"
-                  : isDragging
-                    ? "border-orange-400 bg-orange-500/10 cursor-copy"
-                    : "border-white/20 hover:border-white/40 hover:bg-white/5 cursor-pointer"
-              }`}
-            >
-              {uploadPreview && uploadFile ? (
-                <div className="flex items-center gap-4">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={uploadPreview}
-                    alt="preview"
-                    className="h-20 w-20 rounded-lg object-cover flex-shrink-0"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-white font-medium truncate">
-                      {uploadFile.name}
-                    </p>
-                    <p className="text-xs text-gray-400">
-                      {(uploadFile.size / 1024).toFixed(1)} KB
-                    </p>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setUploadFile(null);
-                        setUploadPreview(null);
-                        setUploadError(null);
-                      }}
-                      className="mt-2 text-xs text-red-400 hover:text-red-300 transition-colors"
-                    >
-                      ✕ Remove
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center select-none">
-                  <div className="text-3xl mb-2 opacity-50">🖼</div>
-                  <p className="text-sm text-gray-400">
-                    Drag & drop or{" "}
-                    <span className="text-orange-400 underline">
-                      choose a file
-                    </span>
-                  </p>
-                  <p className="text-xs text-gray-600 mt-1">
-                    JPG, PNG, WEBP · max 5 MB
-                  </p>
-                </div>
-              )}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) handleFileSelect(file);
-                  e.target.value = "";
+          {/* Upload new image — hidden in demo mode */}
+          {!isDemo && (
+            <section>
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-3">
+                Upload New Image
+              </h3>
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setIsDragging(true);
                 }}
-              />
-            </div>
-
-            {uploadError && (
-              <p className="text-xs text-red-400 mt-2">{uploadError}</p>
-            )}
-
-            {uploadFile && !uploading && (
-              <button
-                onClick={handleUpload}
-                className="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-colors"
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setIsDragging(false);
+                  const file = e.dataTransfer.files[0];
+                  if (file) handleFileSelect(file);
+                }}
+                onClick={() => !uploadFile && fileInputRef.current?.click()}
+                className={`border-2 border-dashed rounded-xl p-5 transition-colors ${
+                  uploadFile
+                    ? "border-white/20 cursor-default"
+                    : isDragging
+                      ? "border-orange-400 bg-orange-500/10 cursor-copy"
+                      : "border-white/20 hover:border-white/40 hover:bg-white/5 cursor-pointer"
+                }`}
               >
-                ↑ Upload to Bucket
-              </button>
-            )}
-            {uploading && (
-              <p className="text-sm text-gray-400 mt-3 animate-pulse">
-                Uploading…
-              </p>
-            )}
-          </section>
+                {uploadPreview && uploadFile ? (
+                  <div className="flex items-center gap-4">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={uploadPreview}
+                      alt="preview"
+                      className="h-20 w-20 rounded-lg object-cover flex-shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-white font-medium truncate">
+                        {uploadFile.name}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        {(uploadFile.size / 1024).toFixed(1)} KB
+                      </p>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setUploadFile(null);
+                          setUploadPreview(null);
+                          setUploadError(null);
+                        }}
+                        className="mt-2 text-xs text-red-400 hover:text-red-300 transition-colors"
+                      >
+                        ✕ Remove
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center select-none">
+                    <div className="text-3xl mb-2 opacity-50">🖼</div>
+                    <p className="text-sm text-gray-400">
+                      Drag & drop or{" "}
+                      <span className="text-orange-400 underline">
+                        choose a file
+                      </span>
+                    </p>
+                    <p className="text-xs text-gray-600 mt-1">
+                      JPG, PNG, WEBP · max 5 MB
+                    </p>
+                  </div>
+                )}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleFileSelect(file);
+                    e.target.value = "";
+                  }}
+                />
+              </div>
+
+              {uploadError && (
+                <p className="text-xs text-red-400 mt-2">{uploadError}</p>
+              )}
+
+              {uploadFile && !uploading && (
+                <button
+                  onClick={handleUpload}
+                  className="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg transition-colors"
+                >
+                  ↑ Upload to Bucket
+                </button>
+              )}
+              {uploading && (
+                <p className="text-sm text-gray-400 mt-3 animate-pulse">
+                  Uploading…
+                </p>
+              )}
+            </section>
+          )}
         </div>
 
         {/* ── Footer ─────────────────────────────────── */}
@@ -318,7 +322,7 @@ export default function MenuImagePickerModal({
             </button>
             <button
               onClick={handleSave}
-              disabled={!hasChanged || saving}
+              disabled={!hasChanged || saving || isDemo}
               className="px-4 py-2 text-sm font-medium bg-orange-500 hover:bg-orange-400 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
             >
               {saving ? "Saving…" : "Save"}
