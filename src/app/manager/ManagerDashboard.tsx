@@ -464,10 +464,12 @@ export default function ManagerDashboard({
             );
           })()}
 
-        {activeTab === "reviews" && <ReviewManager reviews={reviews} />}
+        {activeTab === "reviews" && (
+          <ReviewManager reviews={reviews} isDemo={isDemo} />
+        )}
 
         {activeTab === "gallery" && (
-          <GalleryManager initialImages={galleryImages} />
+          <GalleryManager initialImages={galleryImages} isDemo={isDemo} />
         )}
       </main>
     </>

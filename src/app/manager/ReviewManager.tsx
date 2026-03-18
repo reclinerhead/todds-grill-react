@@ -31,15 +31,15 @@ function SentimentBadge({ sentiment }: { sentiment: string | null }) {
   if (!sentiment) return null;
   const map: Record<string, { label: string; cls: string }> = {
     positive: {
-      label: "AI: Positive",
+      label: "AI: Positive Sentiment",
       cls: "bg-green-100 text-green-700 border border-green-300",
     },
     negative: {
-      label: "AI: Negative",
+      label: "AI: Negative Sentiment",
       cls: "bg-red-100 text-red-700 border border-red-300",
     },
     neutral: {
-      label: "AI: Neutral",
+      label: "AI: Neutral Sentiment",
       cls: "bg-gray-100 text-gray-600 border border-gray-300",
     },
   };
@@ -55,7 +55,13 @@ function SentimentBadge({ sentiment }: { sentiment: string | null }) {
 
 // ─── Comment card (child review) ─────────────────────────────────────────────
 
-function CommentCard({ comment }: { comment: ReviewRow }) {
+function CommentCard({
+  comment,
+  isDemo = false,
+}: {
+  comment: ReviewRow;
+  isDemo?: boolean;
+}) {
   const [deleting, startDeleteTransition] = useTransition();
 
   function handleDelete() {
@@ -108,15 +114,17 @@ function CommentCard({ comment }: { comment: ReviewRow }) {
               )}
             </div>
 
-            <button
-              type="button"
-              onClick={handleDelete}
-              disabled={deleting}
-              title="Delete comment"
-              className="shrink-0 p-1 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-40"
-            >
-              <Trash2 size={13} />
-            </button>
+            {!isDemo && (
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={deleting}
+                title="Delete comment"
+                className="shrink-0 p-1 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-40"
+              >
+                <Trash2 size={13} />
+              </button>
+            )}
           </div>
 
           {/* Comment text */}
@@ -134,9 +142,11 @@ function CommentCard({ comment }: { comment: ReviewRow }) {
 function ReviewCard({
   review,
   comments,
+  isDemo = false,
 }: {
   review: ReviewRow;
   comments: ReviewRow[];
+  isDemo?: boolean;
 }) {
   const hasResponse = Boolean(review.manager_response);
   const [replyOpen, setReplyOpen] = useState(!hasResponse);
@@ -273,20 +283,22 @@ function ReviewCard({
             </div>
           </div>
 
-          {/* Delete */}
-          <button
-            type="button"
-            onClick={handleDelete}
-            disabled={deleting}
-            title={
-              comments.length > 0
-                ? `Delete review + ${comments.length} comment${comments.length > 1 ? "s" : ""}`
-                : "Delete review"
-            }
-            className="shrink-0 p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-40"
-          >
-            <Trash2 size={15} />
-          </button>
+          {/* Delete — hidden in demo mode */}
+          {!isDemo && (
+            <button
+              type="button"
+              onClick={handleDelete}
+              disabled={deleting}
+              title={
+                comments.length > 0
+                  ? `Delete review + ${comments.length} comment${comments.length > 1 ? "s" : ""}`
+                  : "Delete review"
+              }
+              className="shrink-0 p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-40"
+            >
+              <Trash2 size={15} />
+            </button>
+          )}
         </div>
 
         {/* Review text */}
@@ -365,7 +377,8 @@ function ReviewCard({
             <div className="flex items-center gap-2 mt-2">
               <button
                 type="submit"
-                className="px-4 py-1.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium transition-colors"
+                disabled={isDemo}
+                className="px-4 py-1.5 rounded-lg bg-orange-500 hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium transition-colors"
               >
                 Post Reply
               </button>
@@ -393,7 +406,7 @@ function ReviewCard({
             </span>
           </div>
           {comments.map((comment) => (
-            <CommentCard key={comment.id} comment={comment} />
+            <CommentCard key={comment.id} comment={comment} isDemo={isDemo} />
           ))}
         </div>
       )}
@@ -405,7 +418,13 @@ function ReviewCard({
 
 type FilterState = "all" | "pending" | "responded";
 
-export default function ReviewManager({ reviews }: { reviews: ReviewRow[] }) {
+export default function ReviewManager({
+  reviews,
+  isDemo = false,
+}: {
+  reviews: ReviewRow[];
+  isDemo?: boolean;
+}) {
   const [filter, setFilter] = useState<FilterState>("all");
 
   // Split top-level and child reviews
@@ -509,6 +528,7 @@ export default function ReviewManager({ reviews }: { reviews: ReviewRow[] }) {
               key={review.id}
               review={review}
               comments={getComments(review.id)}
+              isDemo={isDemo}
             />
           ))}
         </div>

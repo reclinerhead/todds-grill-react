@@ -95,14 +95,17 @@ export default async function ManagerPage() {
           >
             ↗ Public Site
           </Link>
-          <form action={signOut}>
-            <button
-              type="submit"
-              className="rounded-lg border border-white/20 px-4 py-1.5 text-sm text-gray-300 hover:border-red-400 hover:text-red-400 transition-colors"
-            >
-              Sign out
-            </button>
-          </form>
+
+          {isDemo == false && (
+            <form action={signOut}>
+              <button
+                type="submit"
+                className="rounded-lg border border-white/20 px-4 py-1.5 text-sm text-gray-300 hover:border-red-400 hover:text-red-400 transition-colors"
+              >
+                Sign out
+              </button>
+            </form>
+          )}
         </div>
       </header>
       {isDemo && (

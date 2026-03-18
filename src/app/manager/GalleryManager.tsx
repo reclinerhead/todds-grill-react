@@ -9,8 +9,10 @@ type GalleryImage = { name: string; url: string };
 
 export default function GalleryManager({
   initialImages,
+  isDemo = false,
 }: {
   initialImages: GalleryImage[];
+  isDemo?: boolean;
 }) {
   const [images, setImages] = useState<GalleryImage[]>(initialImages);
 
@@ -91,96 +93,100 @@ export default function GalleryManager({
         </div>
       </div>
 
-      {/* Upload section */}
-      <div className="mb-10">
-        <h2 className="text-lg font-bold text-white mb-4">Upload New Photo</h2>
-        <div
-          onDragOver={(e) => {
-            e.preventDefault();
-            setIsDragging(true);
-          }}
-          onDragLeave={() => setIsDragging(false)}
-          onDrop={(e) => {
-            e.preventDefault();
-            setIsDragging(false);
-            const file = e.dataTransfer.files[0];
-            if (file) handleFileSelect(file);
-          }}
-          onClick={() => !uploadFile && fileInputRef.current?.click()}
-          className={`relative rounded-xl border-2 border-dashed transition-colors cursor-pointer p-6 text-center ${
-            isDragging
-              ? "border-orange-500 bg-orange-500/10"
-              : uploadFile
-                ? "border-white/20 bg-gray-800 cursor-default"
-                : "border-white/20 bg-gray-800 hover:border-orange-500/60 hover:bg-gray-800/80"
-          }`}
-        >
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) handleFileSelect(file);
-              e.target.value = "";
+      {/* Upload section — hidden in demo mode */}
+      {!isDemo && (
+        <div className="mb-10">
+          <h2 className="text-lg font-bold text-white mb-4">
+            Upload New Photo
+          </h2>
+          <div
+            onDragOver={(e) => {
+              e.preventDefault();
+              setIsDragging(true);
             }}
-          />
+            onDragLeave={() => setIsDragging(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setIsDragging(false);
+              const file = e.dataTransfer.files[0];
+              if (file) handleFileSelect(file);
+            }}
+            onClick={() => !uploadFile && fileInputRef.current?.click()}
+            className={`relative rounded-xl border-2 border-dashed transition-colors cursor-pointer p-6 text-center ${
+              isDragging
+                ? "border-orange-500 bg-orange-500/10"
+                : uploadFile
+                  ? "border-white/20 bg-gray-800 cursor-default"
+                  : "border-white/20 bg-gray-800 hover:border-orange-500/60 hover:bg-gray-800/80"
+            }`}
+          >
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleFileSelect(file);
+                e.target.value = "";
+              }}
+            />
 
-          {uploadPreview ? (
-            <div className="flex flex-col items-center gap-4">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={uploadPreview}
-                alt="Preview"
-                className="max-h-48 rounded-lg object-contain shadow-lg"
-              />
-              <p className="text-sm text-gray-300">{uploadFile?.name}</p>
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleUpload();
-                  }}
-                  disabled={uploading}
-                  className="px-5 py-2 rounded-lg bg-orange-600 hover:bg-orange-500 disabled:opacity-50 text-white text-sm font-semibold transition-colors"
-                >
-                  {uploading ? "Uploading…" : "Upload Photo"}
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setUploadFile(null);
-                    setUploadPreview(null);
-                    setUploadError(null);
-                  }}
-                  disabled={uploading}
-                  className="px-5 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 disabled:opacity-50 text-gray-300 text-sm font-medium transition-colors"
-                >
-                  Cancel
-                </button>
+            {uploadPreview ? (
+              <div className="flex flex-col items-center gap-4">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={uploadPreview}
+                  alt="Preview"
+                  className="max-h-48 rounded-lg object-contain shadow-lg"
+                />
+                <p className="text-sm text-gray-300">{uploadFile?.name}</p>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleUpload();
+                    }}
+                    disabled={uploading}
+                    className="px-5 py-2 rounded-lg bg-orange-600 hover:bg-orange-500 disabled:opacity-50 text-white text-sm font-semibold transition-colors"
+                  >
+                    {uploading ? "Uploading…" : "Upload Photo"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setUploadFile(null);
+                      setUploadPreview(null);
+                      setUploadError(null);
+                    }}
+                    disabled={uploading}
+                    className="px-5 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 disabled:opacity-50 text-gray-300 text-sm font-medium transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center gap-2 py-4">
-              <span className="text-4xl">📷</span>
-              <p className="text-white font-medium">
-                Drop an image here, or{" "}
-                <span className="text-orange-400 underline">browse</span>
-              </p>
-              <p className="text-xs text-gray-500">
-                JPEG, PNG, WebP or GIF &bull; Max 5 MB
-              </p>
-            </div>
+            ) : (
+              <div className="flex flex-col items-center gap-2 py-4">
+                <span className="text-4xl">📷</span>
+                <p className="text-white font-medium">
+                  Drop an image here, or{" "}
+                  <span className="text-orange-400 underline">browse</span>
+                </p>
+                <p className="text-xs text-gray-500">
+                  JPEG, PNG, WebP or GIF &bull; Max 5 MB
+                </p>
+              </div>
+            )}
+          </div>
+
+          {uploadError && (
+            <p className="mt-2 text-sm text-red-400">{uploadError}</p>
           )}
         </div>
-
-        {uploadError && (
-          <p className="mt-2 text-sm text-red-400">{uploadError}</p>
-        )}
-      </div>
+      )}
 
       {/* Photo grid */}
       <h2 className="text-lg font-bold text-white mb-4">Gallery Photos</h2>
@@ -217,16 +223,18 @@ export default function GalleryManager({
               </button>
               {/* Hover overlay with delete button */}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors pointer-events-none" />
-              <button
-                type="button"
-                onClick={() => {
-                  setDeleteTarget(img);
-                  setDeleteError(null);
-                }}
-                className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs font-semibold shadow-lg z-10"
-              >
-                🗑 Delete
-              </button>
+              {!isDemo && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDeleteTarget(img);
+                    setDeleteError(null);
+                  }}
+                  className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs font-semibold shadow-lg z-10"
+                >
+                  🗑 Delete
+                </button>
+              )}
             </div>
           ))}
         </div>
