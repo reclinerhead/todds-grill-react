@@ -67,7 +67,9 @@ Protected via Next.js middleware + role-based access control (`profiles` table, 
 
 <div align="center">
   <img src="/screenshots/screen1.png" alt="Public Main Page" width="800" style="margin-bottom: 1rem;" />
-    Public site main page with hero section that shows the currently featured menu items.  It picks three at random if more than are set -- and will collapse elegantly if there are only 2, 1, or none.<br><br>
+   <div align="center" style="margin-bottom: 2rem">
+    Public site main page with hero section that shows the currently featured menu items.  It picks three at random if more than are set -- and will collapse elegantly if there are only 2, 1, or none. 
+  </div>
 
   <img src="/screenshots/screen2.png" alt="Public Gallery" width="800" style="margin-bottom: 1rem;" />
     Public photo gallery pulling from the supabase storage bucket.<br><br>
@@ -76,7 +78,8 @@ Protected via Next.js middleware + role-based access control (`profiles` table, 
     Example of chatting with a multi-personality agent. Lots of care went into designing the prompt to be safe, prevent abusive posts, not go off rails, and to be hardened against prompt injection and hijacking.  Either persona can respond (sometimes both) depending on the content of the message.<br><br>
 
   <img src="/screenshots/screen4.png" alt="Management Dashboard Overview" width="800" style="margin-bottom: 1rem;" />
-    The management dashboard for the website.  Authorized users may edit their menu items, attach and upload new menu images, manage review, and manage their customer photo galleries easily and quickly.<br><br>
+    The management dashboard for the website.  Authorized users may edit their menu items, attach and upload new menu images, manage review, and manage their customer photo galleries easily and quickly.
+    <br><br>
 
 </div>
 
