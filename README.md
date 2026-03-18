@@ -53,11 +53,11 @@ Protected via Next.js middleware + role-based access control (`profiles` table, 
 
 ## Screenshots
 
-<image-card alt="Public Main Page" src="screenshots/screen1.png" ></image-card>
-<image-card alt="Public Gallery" src="screenshots/screen2.png" ></image-card>
-<image-card alt="Customer Service Agent Chat" src="screenshots/screen3.png" ></image-card>
-<image-card alt="Management Dashboard Overview" src="screenshots/screen4.png" ></image-card>
-<image-card alt="Review Manager with AI Reply" src="screenshots/screen5.png" ></image-card>
+<image-card alt="Public Main Page" src="/screenshots/screen1.png" ></image-card>
+<image-card alt="Public Gallery" src="/screenshots/screen2.png" ></image-card>
+<image-card alt="Customer Service Agent Chat" src="/screenshots/screen3.png" ></image-card>
+<image-card alt="Management Dashboard Overview" src="/screenshots/screen4.png" ></image-card>
+<image-card alt="Review Manager with AI Reply" src="/screenshots/screen5.png" ></image-card>
 
 ### Security
 
