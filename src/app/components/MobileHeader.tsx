@@ -62,7 +62,7 @@ export default function MobileHeader({
             >
               Talk to the Manager
             </button>
-            {isManager && (
+            {(isManager || isDemo) && (
               <Link
                 href="/manager"
                 className="border border-white/20 text-gray-300 hover:border-orange-400 hover:text-orange-400 px-4 py-1.5 rounded-lg transition-all duration-200 text-sm font-medium"
