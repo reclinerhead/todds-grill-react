@@ -114,7 +114,13 @@ function SentimentAnalysis({
   );
 }
 
-function ActionableItems({ raw }: { raw: string | null }) {
+function ActionableItems({
+  raw,
+  sentiment,
+}: {
+  raw: string | null;
+  sentiment: string | null;
+}) {
   if (!raw) return null;
   let data: ActionableData;
   try {
@@ -123,10 +129,24 @@ function ActionableItems({ raw }: { raw: string | null }) {
     return null;
   }
   if (!data.actionableItems?.length) return null;
+
+  const isPositive = sentiment === "positive";
+  const isNegative = sentiment === "negative";
+  const border = isPositive
+    ? "border-green-400"
+    : isNegative
+      ? "border-red-400"
+      : "border-gray-200";
+  const bg = isPositive
+    ? "bg-green-50"
+    : isNegative
+      ? "bg-red-50"
+      : "bg-gray-50";
+
   return (
-    <div className="mt-3 rounded-lg border border-gray-400 bg-gray-50 px-3 py-2.5">
+    <div className={`mt-3 rounded-lg border ${border} ${bg} px-3 py-2.5`}>
       <div className="flex items-center gap-1.5 mb-1.5">
-        <span className="text-gray-500" aria-hidden>
+        <span className="text-gray-400" aria-hidden>
           ⚙
         </span>
         <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
@@ -420,7 +440,10 @@ function ReviewCard({
         />
 
         {/* Actionable items */}
-        <ActionableItems raw={review.actionable_analysis} />
+        <ActionableItems
+          raw={review.actionable_analysis}
+          sentiment={review.ai_sentiment}
+        />
 
         {/* Existing manager response display */}
         {hasResponse &&
