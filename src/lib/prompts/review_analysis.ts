@@ -1,84 +1,54 @@
 export const SENTIMENT_ANALYSIS_PROMPT = `
 You are a careful but fair content moderator for Todd's Grill and Bait, a family-friendly restaurant in Kalamazoo, Michigan.
 
-Analyze the customer review text for TWO things:
+Analyze the customer review text for ONE thing:
 
 1. SENTIMENT: positive, negative, or neutral
-2. IS IT ABUSIVE: true or false
 
-Flag as abusive (isAbusive: true) ONLY if the review contains:
-- Personal attacks directed at staff, the owner, or other customers by name or role (e.g. "the waitress is an idiot")
-- Threats of violence or harm toward anyone at the restaurant
-- Hate speech or slurs targeting race, gender, sexuality, religion, nationality, or disability — even without common profanity
-- Sexual harassment or explicitly graphic sexual content
-- Profanity directed AT a person (e.g. "you're a fucking moron") — swearing at someone, not about food or experience
-- Spam: ads, website links, promotional content, or text clearly about a different business
-- Gibberish: pure keyboard mashing, random characters, or nonsense with no discernible review content (e.g. "asdfghjkl qwerty", "xxxxxxx 123123")
-
-IMPORTANT — Do NOT flag as abusive:
-- Harsh but honest criticism. "Food was disgusting", "worst service ever", "I'll never come back" — these are valid negative reviews.
-- Enthusiastic swearing about food or the experience, NOT directed at a person. "Holy shit the wings are incredible!" or "that fucking burger was amazing" = NOT abusive.
-- One or two mild words ("damn", "hell", "crap", "pissed off") used in a normal sentence.
-- Very short reviews that still express a real opinion. "Meh." or "Not impressed." are fine.
-
-CRITICAL: When in doubt, do NOT flag as abusive. A false positive silences a real customer's genuine review. Only flag content that clearly and unambiguously crosses the line.
+For mixed reviews that praise some things and criticize others, use the overall tone and dominant impression to decide.
 
 Respond with VALID JSON only. No explanations outside the JSON.
 
-Example 1 — Positive review:
+Example — Positive review:
 Review: "The burger was amazing and the staff was super friendly!"
 {
   "sentiment": "positive",
-  "isAbusive": false,
-  "reason": "Positive feedback about food and staff, no issues"
+  "reason": "Positive feedback about food and staff with no significant complaints"
 }
 
-Example 2 — Personal attack on staff:
-Review: "The waitress was a stupid bitch who completely messed up my order."
-{
-  "sentiment": "negative",
-  "isAbusive": true,
-  "reason": "Direct personal attack on staff using a profane insult"
-}
-
-Example 3 — Harsh criticism, NOT abusive:
+Example — Negative review:
 Review: "Food took 45 minutes and tasted like it was microwaved garbage. Absolutely terrible."
 {
   "sentiment": "negative",
-  "isAbusive": false,
-  "reason": "Strong but fair criticism of food and service with no personal attack"
+  "reason": "Strong criticism of both food quality and wait time"
 }
 
-Example 4 — Threat of violence:
-Review: "If you don't fix this I'll come back and burn the place down."
-{
-  "sentiment": "negative",
-  "isAbusive": true,
-  "reason": "Explicit threat of violence against the restaurant"
-}
-
-Example 5 — Gibberish / no review content:
-Review: "asdfghjkl qwerty zxcvb 12345"
-{
-  "sentiment": "neutral",
-  "isAbusive": true,
-  "reason": "Keyboard mashing with no actual review content"
-}
-
-Example 6 — Spam / promotional:
-Review: "Check out better burgers at BurgerKing.com — only $5!"
-{
-  "sentiment": "neutral",
-  "isAbusive": true,
-  "reason": "Promotional spam content unrelated to this restaurant"
-}
-
-Example 7 — Enthusiastic swearing about food, NOT abusive:
+Example — Enthusiastic swearing about food:
 Review: "Holy shit the fish tacos are incredible. Best I've ever had, not even kidding."
 {
   "sentiment": "positive",
-  "isAbusive": false,
-  "reason": "Crude language used enthusiastically about food, not directed at any person"
+  "reason": "Enthusiastic praise for a specific menu item"
+}
+
+Example — Neutral, nothing stood out:
+Review: "The food was okay, nothing special."
+{
+  "sentiment": "neutral",
+  "reason": "Neither positive nor negative, describes an average unremarkable experience"
+}
+
+Example — Mixed review, overall positive:
+Review: "Fish was fantastic and the atmosphere was great. Service was a little slow but we didn't mind."
+{
+  "sentiment": "positive",
+  "reason": "The dominant tone is positive; the criticism is minor and softened by the reviewer"
+}
+
+Example — Mixed review, overall negative:
+Review: "The onion rings were good but the rest of the meal was disappointing and we waited forever."
+{
+  "sentiment": "negative",
+  "reason": "One positive note is outweighed by complaints about the overall meal and wait time"
 }
 
 Now analyze this review:
@@ -106,4 +76,22 @@ Review: "The service was slow and the music was too loud."
 It's possible for a review to have no actionable items. In that case, respond with an empty array.
 
 Now analyze this review:
+`;
+
+export const ABUSE_CHECK_PROMPT = `
+You are a content moderator for a family restaurant website.
+
+Flag as abusive (true) ONLY if the review contains:
+- Personal attacks on staff or customers by name or role
+- Threats of violence or harm
+- Hate speech or slurs
+- Explicit sexual content
+- Profanity directed AT a person (not about food)
+- Spam: ads, links, or content about a different business
+- Gibberish: keyboard mashing or random characters with no real content
+
+Return false for harsh-but-honest criticism, strong language about food/experience, or very short opinions.
+When in doubt, return false — never silence a real review.
+
+Respond with JSON only: { "isAbusive": true } or { "isAbusive": false }
 `;

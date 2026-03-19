@@ -2,9 +2,10 @@
 
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { z } from "zod";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { analyzeReview } from "@/app/actions/reviewflagging";
+import { checkAbuse, analyzeReview } from "@/app/actions/reviewflagging";
 
 const reviewSchema = z
   .object({
@@ -244,55 +245,64 @@ export async function submitReview(
     const reviewerEmail = reviewerEmailRaw || null;
     const stars = "★".repeat(rating);
 
-    // Analyze sentiment & actionable items in parallel — fire and don't block on failure
-    let aiSentiment: string | null = null;
-    let aiReasoning: string | null = null;
-    let aiActionable: string | null = null;
-    let attentionNeeded = true;
-    try {
-      const { sentiment, actionable } = await analyzeReview(reviewText);
-      if (sentiment) {
-        if (sentiment.isAbusive) {
-          return {
-            ok: false,
-            blocked: true,
-            error:
-              "Your review could not be posted because it appears to violate our community guidelines.  Please contact the restaurant directly if you have feedback you'd like to share with them.",
-          };
-        }
-        aiSentiment = sentiment.sentiment;
-        aiReasoning = sentiment.reason;
-        attentionNeeded =
-          sentiment.sentiment === "negative" ||
-          sentiment.sentiment === "positive";
-      }
-      if (actionable) {
-        aiActionable = JSON.stringify(actionable);
-      }
-    } catch (aiError) {
-      console.error("AI analysis failed (non-fatal):", aiError);
+    // Fast synchronous abuse gate — single AI call, blocks before anything is written
+    const { isAbusive } = await checkAbuse(reviewText);
+    if (isAbusive) {
+      return {
+        ok: false,
+        blocked: true,
+        error:
+          "Your review could not be posted because it appears to violate our community guidelines.  Please contact the restaurant directly if you have feedback you'd like to share with them.",
+      };
     }
 
-    const { error } = await supabase.from("reviews").insert({
-      parent_id: null,
-      user_id: activeUser.id,
-      author_name: reviewerName,
-      author_email: reviewerEmail,
-      author_avatar: getInitialForAvatar(reviewerName),
-      author_bg_color: "bg-orange-200",
-      rating: stars,
-      review_text: reviewText,
-      item_reviewed: productNames.join(", "),
-      ai_sentiment: aiSentiment,
-      ai_sentiment_reasoning: aiReasoning,
-      attention_needed: attentionNeeded,
-      actionable_analysis: aiActionable,
-    });
+    // Insert immediately — full sentiment + actionable analysis runs in the background
+    const { data: insertedReview, error } = await supabase
+      .from("reviews")
+      .insert({
+        parent_id: null,
+        user_id: activeUser.id,
+        author_name: reviewerName,
+        author_email: reviewerEmail,
+        author_avatar: getInitialForAvatar(reviewerName),
+        author_bg_color: "bg-orange-200",
+        rating: stars,
+        review_text: reviewText,
+        item_reviewed: productNames.join(", "),
+        ai_sentiment: null,
+        ai_sentiment_reasoning: null,
+        attention_needed: true,
+        actionable_analysis: null,
+      })
+      .select("id")
+      .single();
 
-    if (error) {
+    if (error || !insertedReview) {
       console.error("Supabase insert review error:", error);
       return { ok: false, error: "Unable to save your review right now." };
     }
+
+    const reviewId = insertedReview.id;
+
+    after(async () => {
+      try {
+        const supabaseBackground = await createSupabaseServerClient();
+        const { sentiment, actionable } = await analyzeReview(reviewText);
+        await supabaseBackground
+          .from("reviews")
+          .update({
+            ai_sentiment: sentiment?.sentiment ?? null,
+            ai_sentiment_reasoning: sentiment?.reason ?? null,
+            actionable_analysis: actionable ? JSON.stringify(actionable) : null,
+            attention_needed:
+              sentiment?.sentiment === "negative" ||
+              sentiment?.sentiment === "positive",
+          })
+          .eq("id", reviewId);
+      } catch (aiError) {
+        console.error("Background AI analysis failed:", aiError);
+      }
+    });
 
     revalidatePath("/");
 

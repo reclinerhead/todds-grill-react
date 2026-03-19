@@ -61,10 +61,9 @@ export async function reanalyzeReview(id: number) {
       ai_sentiment: sentiment?.sentiment ?? null,
       ai_sentiment_reasoning: sentiment?.reason ?? null,
       actionable_analysis: actionable ? JSON.stringify(actionable) : null,
-      attention_needed: sentiment?.isAbusive
-        ? true
-        : sentiment?.sentiment === "negative" ||
-          sentiment?.sentiment === "positive",
+      attention_needed:
+        sentiment?.sentiment === "negative" ||
+        sentiment?.sentiment === "positive",
     })
     .eq("id", id);
 

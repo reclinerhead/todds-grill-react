@@ -6,16 +6,16 @@ import { z } from "zod";
 import {
   SENTIMENT_ANALYSIS_PROMPT,
   ACTIONABLE_ANALYSIS_PROMPT,
+  ABUSE_CHECK_PROMPT,
 } from "@/lib/prompts/review_analysis";
+
+const abuseCheckSchema = z.object({
+  isAbusive: z.boolean(),
+});
 
 // Schema for sentiment + themes (your existing one, assuming you have it)
 const sentimentSchema = z.object({
   sentiment: z.enum(["positive", "negative", "neutral"]),
-  isAbusive: z
-    .boolean()
-    .describe(
-      "True if the review contains abusive language or personal attacks.",
-    ),
   reason: z
     .string()
     .describe("One sentence explaining the sentiment decision."),
@@ -33,6 +33,28 @@ const actionableSchema = z.object({
     )
     .describe("actionable concerns from this review"),
 });
+
+// Lightweight abuse-only check — single fast call, used synchronously at submission time
+export async function checkAbuse(
+  comment: string,
+): Promise<{ isAbusive: boolean }> {
+  try {
+    const result = await generateText({
+      model: xai("grok-4-1-fast-reasoning"),
+      output: Output.object({
+        schema: abuseCheckSchema,
+      }),
+      prompt: `${ABUSE_CHECK_PROMPT}
+"""
+${comment}
+"""`,
+    });
+    return { isAbusive: result.experimental_output?.isAbusive ?? false };
+  } catch {
+    // Fail open — don't block submission if the check errors
+    return { isAbusive: false };
+  }
+}
 
 export async function analyzeReview(comment: string) {
   const [sentimentResult, actionableResult] = await Promise.all([
