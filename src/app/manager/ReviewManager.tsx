@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Trash2, MessageSquare, Sparkles } from "lucide-react";
+import { Trash2, MessageSquare, Sparkles, ScanText } from "lucide-react";
 import {
   replyToReview,
   deleteReview,
   deleteComment,
+  reanalyzeReview,
 } from "@/app/actions/manager-reviews";
 import { analyzeReviewForReply } from "@/app/actions/reviewresponder";
 import { formatSmartDate, formatFullDate } from "@/lib/formatDate";
@@ -123,19 +124,19 @@ function ActionableItems({ raw }: { raw: string | null }) {
   }
   if (!data.actionableItems?.length) return null;
   return (
-    <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5">
+    <div className="mt-3 rounded-lg border border-gray-400 bg-gray-50 px-3 py-2.5">
       <div className="flex items-center gap-1.5 mb-1.5">
-        <span className="text-amber-600" aria-hidden>
+        <span className="text-gray-500" aria-hidden>
           ⚙
         </span>
-        <span className="text-xs font-semibold text-amber-700 uppercase tracking-wide">
+        <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
           Actionable Items
         </span>
       </div>
       <ul className="space-y-1">
         {data.actionableItems.map((item, i) => (
-          <li key={i} className="flex items-start gap-2 text-xs text-amber-900">
-            <span className="mt-0.5 shrink-0 text-amber-500">▸</span>
+          <li key={i} className="flex items-start gap-2 text-xs text-gray-700">
+            <span className="mt-0.5 shrink-0 text-gray-400">▸</span>
             <span>{item}</span>
           </li>
         ))}
@@ -245,6 +246,7 @@ function ReviewCard({
   const [replyText, setReplyText] = useState(review.manager_response ?? "");
   const [deleting, startDeleteTransition] = useTransition();
   const [generating, startGenerateTransition] = useTransition();
+  const [reanalyzing, startReanalyzeTransition] = useTransition();
   const [activePassion, setActivePassion] = useState<number | null>(null);
 
   const passionOptions = [
@@ -369,21 +371,40 @@ function ReviewCard({
             </div>
           </div>
 
-          {/* Delete — hidden in demo mode */}
+          {/* Re-analyze + Delete — hidden in demo mode */}
           {!isDemo && (
-            <button
-              type="button"
-              onClick={handleDelete}
-              disabled={deleting}
-              title={
-                comments.length > 0
-                  ? `Delete review + ${comments.length} comment${comments.length > 1 ? "s" : ""}`
-                  : "Delete review"
-              }
-              className="shrink-0 p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-40"
-            >
-              <Trash2 size={15} />
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() =>
+                  startReanalyzeTransition(async () => {
+                    await reanalyzeReview(review.id);
+                  })
+                }
+                disabled={reanalyzing || deleting}
+                title="Re-run AI analysis"
+                className="shrink-0 p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors disabled:opacity-40"
+              >
+                {reanalyzing ? (
+                  <span className="inline-block w-3.75 h-3.75 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <ScanText size={15} />
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={deleting || reanalyzing}
+                title={
+                  comments.length > 0
+                    ? `Delete review + ${comments.length} comment${comments.length > 1 ? "s" : ""}`
+                    : "Delete review"
+                }
+                className="shrink-0 p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors disabled:opacity-40"
+              >
+                <Trash2 size={15} />
+              </button>
+            </div>
           )}
         </div>
 
