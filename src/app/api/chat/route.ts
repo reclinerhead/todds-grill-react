@@ -118,7 +118,7 @@ export async function POST(req: Request) {
     const modelMessages = await convertToModelMessages(messages);
 
     const result = await streamText({
-      model: xai("grok-4-1-fast-reasoning"),
+      model: xai("grok-4-1-fast-non-reasoning"),
       messages: [
         { role: "system", content: BASE_SYSTEM_PROMPT },
         ...modelMessages,
