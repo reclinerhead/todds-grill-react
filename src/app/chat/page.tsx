@@ -40,9 +40,10 @@ export default function ChatPage() {
 
   return (
     <div className="flex flex-col h-screen max-w-2xl mx-auto p-4 bg-gray-950 text-white">
-      <h1 className="text-2xl font-bold mb-4 text-center">
-        Talk to Karen, the Manager, or Todd, the Owner! Ask about the menu,
-        hours, or just say hi. (Hint: Karen&apos;s got jokes 😏)
+      <h1 className="text-md font-bold mb-4 text-center text-gray-600">
+        Talk to Karen, the Manager, or Todd, the Owner! The model will decide
+        which persona responds based on the customer message — ask about the
+        menu, reservations, restaurant history, their best joke, or just say hi.
       </h1>
 
       {/* Messages area */}

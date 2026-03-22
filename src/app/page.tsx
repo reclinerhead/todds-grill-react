@@ -35,11 +35,6 @@ export default async function Home() {
 
   if (galleryError)
     console.error("[Gallery] storage list error:", galleryError);
-  console.log(
-    "[Gallery] files found:",
-    galleryFiles?.length ?? 0,
-    galleryFiles?.map((f) => f.name),
-  );
 
   const galleryImages = (galleryFiles ?? [])
     .filter((f) => f.name !== ".emptyFolderPlaceholder")
@@ -113,9 +108,22 @@ export default async function Home() {
         </main>
 
         {/* Footer */}
-        <footer className="bg-blue-900 text-white py-8">
+        <footer className="bg-gray-950 text-white py-8">
           <div className="container mx-auto px-4 text-center">
-            <p>&copy; 2026 Todds Grill and Bait Shop. All rights reserved.</p>
+            <p className="text-orange-500">
+              &copy; 2026 Todd&apos;s Grill and Bait Shop. All rights reserved.
+            </p>
+
+            <p className="mt-2 text-gray-300">
+              Web design and hosting by{" "}
+              <a
+                href="https://toddtech.llc"
+                target="_blank"
+                className="text-orange-500 hover:text-orange-400 transition-colors"
+              >
+                ToddTech LLC
+              </a>
+            </p>
           </div>
         </footer>
       </div>

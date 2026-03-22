@@ -2,6 +2,12 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["192.168.1.79"],
+  logging: {
+    fetches: {
+      fullUrl: false,
+    },
+    incomingRequests: false,
+  },
   images: {
     remotePatterns: [
       {
