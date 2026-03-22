@@ -40,7 +40,7 @@ export async function checkAbuse(
 ): Promise<{ isAbusive: boolean }> {
   try {
     const result = await generateText({
-      model: xai("grok-4-1-fast-reasoning"),
+      model: xai("grok-4-1-fast-non-reasoning"),
       output: Output.object({
         schema: abuseCheckSchema,
       }),
@@ -70,7 +70,7 @@ ${comment}
     }),
 
     generateText({
-      model: xai("grok-4-1-fast-reasoning"),
+      model: xai("grok-4-1-fast-non-reasoning"),
       output: Output.object({
         schema: actionableSchema,
       }),
